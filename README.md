@@ -1,12 +1,12 @@
 # Azure Policy Ramp Notes
 
-Compile MOF file.
+## Compile MOF file
 
 ```powershell
 .\basic-dsc-config-localhost\basic-localhost.ps1
 ```
 
-Create a custom Azure Policy / DSC3 config package.
+## Create a custom Azure Policy / DSC3 config package.
 
 When trying to run the `New-GuestConfigurationPackage` command, I was receiving the following error.
 
