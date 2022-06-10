@@ -1,6 +1,6 @@
 Configuration basic {
  
-    Import-DSCResource -ModuleName 'PSDscResources'
+    Import-DscResource -ModuleName PSDscResources
  
     Node localhost {
 
