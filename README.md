@@ -20,7 +20,7 @@ SerializationVersion           1.1.0.1
 WSManStackVersion              3.0
 ```
 
-Install the following PowerShell modules.
+From what I can tell, both of these modules are required.
 
 ```
 find-module PSDesiredStateConfiguration | install-module
@@ -28,20 +28,48 @@ find-module PSDSCResources | install-module
 find-module GuestConfiguration | install-module
 ```
 
+In addition to these files, it is necessary that separate modules be made as not all modules from DSC2 have been ported over for DSC3.
+
+There are two options that can be used for this:
+1. Create custom modules through classes (templates are available and only modifications needed are to Get, Set, and Test functions as well as class structure).
+
+2. Create a simple DSC script using the script module which appears to be ported over properly.
+
 ## Compile MOF file
 
 ```powershell
-.\basic-dsc-config-localhost\basic-localhost.ps1
+.\basic-directory\basic-directory.ps1
 ```
 
 ## Create a custom Azure Policy / DSC3 config package.
 
+Update the module name and version in the MOF file.
+
+```
+ ModuleName = "PSDesiredStateConfiguration"; >  ModuleName = "PSDSCResources";
+ ModuleVersion = "1.0"; > ModuleVersion = "2.12.0.0";
+```
+
+Generate the state configuration package.
+
 ```powershell
-New-GuestConfigurationPackage -Name 'basic' -Configuration './basic/localhost.mof' -Type Audit -Force
+New-GuestConfigurationPackage -Name 'basic-package' -Configuration './basic/localhost.mof' -Type AuditAndSet -Force
 ```
 
 ## Test configuration package
 
+However when testing the configuration (note this step is not sucessfull)
+
 ```powershell
-Get-GuestConfigurationPackageComplianceStatus -Path ./basic/basic.zip
+Get-GuestConfigurationPackageComplianceStatus -Path ./basic-package/basic-package.zip
 ```
+
+Alternatively, the following command can be used to test and yield compliance result.
+
+```powershell
+Start-GuestConfigurationPackageRemediation .\basic-package\basic-package.zip
+```
+
+## Publish configuration 
+
+To publish the configuration package, begin to upload the configuration package zip file to Azure storage. This will give a location for Azure Policy to eventually access the configuration. The upload must be the exact zip package that was compiled with all modules within it as well.
