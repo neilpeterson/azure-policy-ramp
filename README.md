@@ -31,7 +31,7 @@ find-module GuestConfiguration | install-module
 In addition to these files, it is necessary that separate modules be made as not all modules from DSC2 have been ported over for DSC3.
 
 There are two options that can be used for this:
-1. Create custom modules through classes (templates are available and only modifications needed are to Get, Set, and Test functions as well as class structure).
+1. Create custom modules through classes (templates are available and only modifications needed are to Get, Set, and Test functions as well as class structure). This module must also be present locally at the path of the environment variable PSModulePath, containing the manifest file and class file.
 
 2. Create a simple DSC script using the script module which appears to be ported over properly.
 
