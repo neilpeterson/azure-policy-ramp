@@ -112,4 +112,4 @@ New-AzPolicyDefinition -Name 'mypolicydefinition' -Policy .\policies\basic_Deplo
 
 ## Create Policy assignment
 
-Use the Azure portal or other mechinism to assing the policy.
+Use the Azure portal or other mechinism to assign the policy.
