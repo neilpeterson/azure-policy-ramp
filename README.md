@@ -38,17 +38,10 @@ There are two options that can be used for this:
 ## Compile MOF file
 
 ```powershell
-.\basic-directory\basic-directory.ps1
+.\demo-config\demo-config.ps1
 ```
 
 ## Create a custom Azure Policy / DSC3 config package.
-
-Update the module name and version in the MOF file.
-
-```
- ModuleName = "PSDesiredStateConfiguration"; >  ModuleName = "PSDSCResources";
- ModuleVersion = "1.0"; > ModuleVersion = "2.12.0.0";
-```
 
 Generate the state configuration package.
 
