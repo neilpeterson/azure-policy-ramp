@@ -30,14 +30,14 @@ find-module GuestConfiguration | install-module
 
 ## DSC Modules
 
-Most DSC v2 modules have not been updated to be compatable with PowerShell 7. It will necessary to create custom modules / logic until all DSC modules have been updated.
+Most DSC v2 modules have not been updated to be compatible with PowerShell 7. It will be necessary to create custom modules / logic until all DSC modules have been updated.
 
-There are two options that can be used for this:
+Two options can be used for this:
 
-1. Create custom modules through PowerShell classes (templates are available and only modifications needed are to Get, Set, and Test functions as well as class structure). This module must also be present locally at the path of the environment variable PSModulePath, containing the manifest file and class file.
-2. Create a simple DSC script using the DSC script resource which appears to have been ported over properly.
+1. Create custom modules through PowerShell classes (templates are available; the only modifications needed are to Get, Set, and Test functions and class structure). This module must also be present locally at the path of the environment variable PSModulePath, containing the manifest file and class file.
+2. Create a simple DSC script using the DSC script resource, which appears to have been ported over properly.
 
-For this POC a custom module was created named `NewFile` and is found at the root of ths repo. Copy this directory to a PowerShell module directory.
+For this POC a custom module was created named `NewFile` and is found at the root of this repo. Copy this directory to a PowerShell module directory.
 
 ## Author a DSC configuration
 
@@ -47,7 +47,7 @@ See the sample in this repo at ./demo-config/demo-config.ps1. Notice that this c
 
 Run the following command to compile the config (.ps1) into a .mof file.
 
-```powershell
+```
 .\demo-config\demo-config.ps1
 ```
 
@@ -55,7 +55,7 @@ Run the following command to compile the config (.ps1) into a .mof file.
 
 The .mof file then needs to be packaged into an Azure Guest Configuration package. Use the following command to do this. The resulting package is a .zip file.
 
-```powershell
+```
 New-GuestConfigurationPackage -Name 'basic' -Configuration './basic/localhost.mof' -Type AuditAndSet -Force
 ```
 
@@ -82,13 +82,13 @@ resources            : {@{complianceStatus=False; properties=; reasons=System.Ob
 startTime            : 6/22/2022 2:50:49 AM
 ```
 
-And the following command can be used to execute the configuration and yield compliance result.
+And the following command can be used to execute the configuration and yield compliance results.
 
 ```powershell
 Start-GuestConfigurationPackageRemediation ./basic-package.zip
 ```
 
-This step should create the file `/tmp/test.txt` at the root of your Windows file system with the text DSC Rocks inside of the text file.
+This step should create the file `/tmp/test.txt` at the root of your Windows file system with the text DSC Rocks inside the text file.
 
 ## Publish configuration 
 
