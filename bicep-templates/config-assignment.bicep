@@ -4,7 +4,6 @@ param packageLocation string
 param packageHash string
 param location string = resourceGroup().location
 
-
 resource myVM 'Microsoft.Compute/virtualMachines@2021-03-01' existing = {
   name: vmName
 }

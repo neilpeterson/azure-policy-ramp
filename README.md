@@ -56,7 +56,7 @@ Run the following command to compile the config (.ps1) into a .mof file.
 The .mof file then needs to be packaged into an Azure Guest Configuration package. Use the following command to do this. The resulting package is a .zip file.
 
 ```powershell
-New-GuestConfigurationPackage -Name 'basic-package' -Configuration './basic/localhost.mof' -Type AuditAndSet -Force
+New-GuestConfigurationPackage -Name 'basic' -Configuration './basic/localhost.mof' -Type AuditAndSet -Force
 ```
 
 ## Test configuration package
@@ -97,9 +97,7 @@ To publish the configuration package, to upload the configuration package zip fi
 ## Create Azure Policy
 
 ```
-$policyGUID = New-Guid
-
-$ContentUri = 'https://policyconfnepeters.blob.core.windows.net/guestconfig/basic-package.zip?sp=r&st=2022-06-22T02:59:22Z&se=2022-06-22T10:59:22Z&spr=https&sv=2021-06-08&sr=b&sig=lbeIPLdRZ4VXfprEEcGnZuYemCzMn%2BBLbPxtqShLtWY%3D'
+$ContentUri = ''
 
 New-GuestConfigurationPolicy -PolicyId (New-Guid).Guid -ContentUri $ContentUri -DisplayName 'New File Demo' -Path './policies' -Platform 'Windows' -Description 'New File Demo' -PolicyVersion 1.0.0 -Mode ApplyAndAutoCorrect -Verbose
 ```
@@ -107,5 +105,5 @@ New-GuestConfigurationPolicy -PolicyId (New-Guid).Guid -ContentUri $ContentUri -
 Publish the Azure Policy.
 
 ```
-New-AzPolicyDefinition -Name 'mypolicydefinition' -Policy '.\policies\'
+New-AzPolicyDefinition -Name 'mypolicydefinition' -Policy .\policies\basic_DeployIfNotExists.json
 ```
