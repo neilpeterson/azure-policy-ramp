@@ -4,7 +4,7 @@
 
 Make sure that you are working with PowerShell 7.
 
-```
+```powershell
 $> $PSVersionTable
 
 Name                           Value
@@ -22,7 +22,7 @@ WSManStackVersion              3.0
 
 Install the following PowerShell modules.
 
-```
+```powershell
 find-module PSDesiredStateConfiguration | install-module
 find-module PSDSCResources | install-module
 find-module GuestConfiguration | install-module
@@ -47,7 +47,7 @@ See the sample in this repo at ./demo-config/demo-config.ps1. Notice that this c
 
 Run the following command to compile the config (.ps1) into a .mof file.
 
-```
+```powershell
 .\demo-config\demo-config.ps1
 ```
 
@@ -55,7 +55,7 @@ Run the following command to compile the config (.ps1) into a .mof file.
 
 The .mof file then needs to be packaged into an Azure Guest Configuration package. Use the following command to do this. The resulting package is a .zip file.
 
-```
+```powershell
 New-GuestConfigurationPackage -Name 'basic' -Configuration './basic/localhost.mof' -Type AuditAndSet -Force
 ```
 
@@ -69,7 +69,7 @@ Get-GuestConfigurationPackageComplianceStatus -Path ./basic-package.zip
 
 The output should look similar to this.
 
-```
+```powershell
 PS > Get-GuestConfigurationPackageComplianceStatus -Path ./basic-package.zip
 
 additionalProperties : {}
@@ -96,14 +96,20 @@ To publish the configuration package, to upload the configuration package zip fi
 
 ## Create Azure Policy
 
-```
+Create the Azure Policy template using this command.
+
+```powershell
 $ContentUri = ''
 
 New-GuestConfigurationPolicy -PolicyId (New-Guid).Guid -ContentUri $ContentUri -DisplayName 'New File Demo' -Path './policies' -Platform 'Windows' -Description 'New File Demo' -PolicyVersion 1.0.0 -Mode ApplyAndAutoCorrect -Verbose
 ```
 
-Publish the Azure Policy.
+And publish the policy to Azure.
 
-```
+```powershell
 New-AzPolicyDefinition -Name 'mypolicydefinition' -Policy .\policies\basic_DeployIfNotExists.json
 ```
+
+## Create Policy assignment
+
+Use the Azure portal or other mechinism to assing the policy.
