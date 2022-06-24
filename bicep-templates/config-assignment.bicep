@@ -4,7 +4,6 @@ param packageLocation string = 'https://policyconfnepeters.blob.core.windows.net
 param packageHash string = '4B7AB4E7B951E994128751A4A3333B654ACD78360269F965C8E6A13226FBD9BC'
 param location string = resourceGroup().location
 
-
 resource myVM 'Microsoft.Compute/virtualMachines@2021-03-01' existing = {
   name: vmName
 }
