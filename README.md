@@ -1,6 +1,6 @@
 # Azure Policy Ramp Notes
 
-## PowerShell environment and Modules.
+## PowerShell environment and Modules
 
 Make sure that you are working with PowerShell 7.
 
@@ -48,7 +48,7 @@ See the sample in this repo at ./demo-config/demo-config.ps1. Notice that this c
 Run the following command to compile the config (.ps1) into a .mof file.
 
 ```powershell
-.\demo-config\demo-config.ps1
+.\tls-config\tls.ps1
 ```
 
 ## Create a custom Azure Policy / DSC3 config package.
@@ -56,7 +56,7 @@ Run the following command to compile the config (.ps1) into a .mof file.
 The .mof file then needs to be packaged into an Azure Guest Configuration package. Use the following command to do this. The resulting package is a .zip file.
 
 ```powershell
-New-GuestConfigurationPackage -Name 'basic' -Configuration './basic/localhost.mof' -Type AuditAndSet -Force
+New-GuestConfigurationPackage -Name 'tls-secure' -Configuration './tls/localhost.mof' -Type AuditAndSet -Force
 ```
 
 ## Test configuration package
@@ -64,7 +64,7 @@ New-GuestConfigurationPackage -Name 'basic' -Configuration './basic/localhost.mo
 Use the following command to test that the configuration package .zip file is specification compliant.
 
 ```powershell
-Get-GuestConfigurationPackageComplianceStatus -Path ./basic-package.zip
+Get-GuestConfigurationPackageComplianceStatus -Path ./tls-secure.zip
 ```
 
 The output should look similar to this.
@@ -85,7 +85,7 @@ startTime            : 6/22/2022 2:50:49 AM
 And the following command can be used to execute the configuration and yield compliance results.
 
 ```powershell
-Start-GuestConfigurationPackageRemediation ./basic-package.zip
+Start-GuestConfigurationPackageRemediation ./tls-secure.zip
 ```
 
 This step should create the file `/tmp/test.txt` at the root of your Windows file system with the text DSC Rocks inside the text file.
@@ -101,15 +101,19 @@ Create the Azure Policy template using this command.
 ```powershell
 $ContentUri = ''
 
-New-GuestConfigurationPolicy -PolicyId (New-Guid).Guid -ContentUri $ContentUri -DisplayName 'New File Demo' -Path './policies' -Platform 'Windows' -Description 'New File Demo' -PolicyVersion 1.0.0 -Mode ApplyAndAutoCorrect -Verbose
+New-GuestConfigurationPolicy -PolicyId (New-Guid).Guid -ContentUri $ContentUri -DisplayName 'TLS Secure' -Path './policies' -Platform 'Windows' -Description 'TLS Secure' -PolicyVersion 1.0.0 -Mode ApplyAndAutoCorrect -Verbose
 ```
 
 And publish the policy to Azure.
 
 ```powershell
-New-AzPolicyDefinition -Name 'mypolicydefinition' -Policy .\policies\basic_DeployIfNotExists.json
+New-AzPolicyDefinition -Name 'tls-secure' -Policy .\policies\tls-secure_DeployIfNotExists.json
 ```
 
 ## Create Policy assignment
 
 Use the Azure portal or other mechinism to assign the policy.
+
+## Create remediation task
+
+<TBD>
