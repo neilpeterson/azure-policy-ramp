@@ -113,3 +113,10 @@ New-AzPolicyDefinition -Name 'mypolicydefinition' -Policy .\policies\basic_Deplo
 ## Create Policy assignment
 
 Use the Azure portal or other mechinism to assign the policy.
+
+## Creating Remediation
+From the current understanding and usage of Azure Policy Guest Configuration, remediation occurs only with policies of the type deployIfNotExists and modify. These are determined by the Guest Configuration package that is given ApplyAndAutoCorrect or ApplyAndMonitor when transformed to a policy. The main usage for auto-remediation is with ApplyAndAutoCorrect. However, for continuous remediation to trigger, a remediation task must be created for the policy first in the following manner:
+
+```powershell
+az policy remediation create --name myRemediation --policy-assignment '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policyAssignments/{myAssignmentId}'
+```
