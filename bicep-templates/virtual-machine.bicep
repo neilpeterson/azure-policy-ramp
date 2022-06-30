@@ -1,14 +1,12 @@
-param vName string = 'practicenet14315'
-param location string = resourceGroup().location
-param subnetName string = 'practicesubnet536125'
-param nicName string = 'practicenic3129037901'
-param vmName string = 'shivvycomp'
-param admin string = 'azureadmin'
+param adminUserName string
 @secure()
 param adminPass string
+param vmName string
+param location string = resourceGroup().location
+param random string = uniqueString(resourceGroup().id)
 
 resource virtualNetwork 'Microsoft.Network/virtualNetworks@2019-11-01' = {
-  name: vName
+  name: random
   location: location
   properties: {
     addressSpace: {
@@ -18,7 +16,7 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2019-11-01' = {
     }
     subnets: [
       {
-        name: subnetName
+        name: random
         properties: {
           addressPrefix: '10.0.0.0/24'
         }
@@ -27,9 +25,8 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2019-11-01' = {
   }
 }
 
-
 resource networkInterface 'Microsoft.Network/networkInterfaces@2021-08-01' = {
-  name: nicName
+  name: vmName
   location: location
   properties: {
     ipConfigurations: [
@@ -38,7 +35,7 @@ resource networkInterface 'Microsoft.Network/networkInterfaces@2021-08-01' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           subnet: {
-            id: '${virtualNetwork.id}/subnets/${subnetName}'
+            id: '${virtualNetwork.id}/subnets/${random}'
           }
           publicIPAddress: {
             id: publicIPAddress.id
@@ -50,16 +47,15 @@ resource networkInterface 'Microsoft.Network/networkInterfaces@2021-08-01' = {
 }
 
 resource publicIPAddress 'Microsoft.Network/publicIPAddresses@2019-11-01' = {
-  name: 'pineapples'
+  name: vmName
   location: location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
     dnsSettings: {
-      domainNameLabel: 'pineapples'
+      domainNameLabel: vmName
     }
   }
 }
-
 
 resource windowsVM 'Microsoft.Compute/virtualMachines@2020-12-01' = {
   name: vmName
@@ -73,7 +69,7 @@ resource windowsVM 'Microsoft.Compute/virtualMachines@2020-12-01' = {
     }
     osProfile: {
       computerName: vmName
-      adminUsername: admin
+      adminUsername: adminUserName
       adminPassword: adminPass
     }
     storageProfile: {
@@ -84,7 +80,7 @@ resource windowsVM 'Microsoft.Compute/virtualMachines@2020-12-01' = {
         version: 'latest'
       }
       osDisk: {
-        name: 'name'
+        name: vmName
         caching: 'ReadWrite'
         createOption: 'FromImage'
       }
@@ -96,12 +92,6 @@ resource windowsVM 'Microsoft.Compute/virtualMachines@2020-12-01' = {
         }
       ]
     }
-    // diagnosticsProfile: {
-    //   bootDiagnostics: {
-    //     enabled: true
-    //     storageUri:  'storageUri'
-    //   }
-    // }
   }
 }
 
