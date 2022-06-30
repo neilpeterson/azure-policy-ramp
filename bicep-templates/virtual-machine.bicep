@@ -1,7 +1,7 @@
-param adminUserName string
+param AdminUserName string
 @secure()
-param adminPass string
-param vmName string
+param AdminPassword string
+param VMName string
 param location string = resourceGroup().location
 param random string = uniqueString(resourceGroup().id)
 
@@ -26,7 +26,7 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2019-11-01' = {
 }
 
 resource networkInterface 'Microsoft.Network/networkInterfaces@2021-08-01' = {
-  name: vmName
+  name: VMName
   location: location
   properties: {
     ipConfigurations: [
@@ -47,18 +47,18 @@ resource networkInterface 'Microsoft.Network/networkInterfaces@2021-08-01' = {
 }
 
 resource publicIPAddress 'Microsoft.Network/publicIPAddresses@2019-11-01' = {
-  name: vmName
+  name: VMName
   location: location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
     dnsSettings: {
-      domainNameLabel: vmName
+      domainNameLabel: VMName
     }
   }
 }
 
 resource windowsVM 'Microsoft.Compute/virtualMachines@2020-12-01' = {
-  name: vmName
+  name: VMName
   location: location
   identity: {
      type: 'SystemAssigned'
@@ -68,9 +68,9 @@ resource windowsVM 'Microsoft.Compute/virtualMachines@2020-12-01' = {
       vmSize: 'Standard_DS1'
     }
     osProfile: {
-      computerName: vmName
-      adminUsername: adminUserName
-      adminPassword: adminPass
+      computerName: VMName
+      adminUsername: AdminUserName
+      adminPassword: AdminPassword
     }
     storageProfile: {
       imageReference: {
@@ -80,7 +80,7 @@ resource windowsVM 'Microsoft.Compute/virtualMachines@2020-12-01' = {
         version: 'latest'
       }
       osDisk: {
-        name: vmName
+        name: VMName
         caching: 'ReadWrite'
         createOption: 'FromImage'
       }
