@@ -150,3 +150,5 @@ Then, the following command can be run in order to create a remediation task:
 ```powershell
 Start-AzPolicyRemediation -Name 'myRemedation' -PolicyAssignmentId '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policyAssignments/{myAssignmentId}'
 ```
+
+delete me
