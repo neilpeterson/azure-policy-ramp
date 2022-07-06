@@ -94,6 +94,19 @@ This step should create the file `/tmp/test.txt` at the root of your Windows fil
 
 To publish the configuration package, to upload the configuration package zip file to an Azure Blob storage container. This will give a location for Azure Policy to eventually access the configuration. The upload must be the exact zip package that was compiled with all modules within it as well.
 
+For the commands, the following can be used:
+```powershell
+# Creates a new resource group, storage account, and container
+New-AzResourceGroup -name myResourceGroupName -Location WestUS
+New-AzStorageAccount -ResourceGroupName myResourceGroupName -Name mystorageaccount -SkuName 'Standard_LRS' -Location 'WestUs' | New-AzStorageContainer -Name guestconfiguration -Permission Blob
+```
+
+Then, create a blob and upload the storage by obtaining the context of the account:
+```powershell
+$Context = New-AzStorageContext -ConnectionString "DefaultEndpointsProtocol=https;AccountName=ContosoGeneral;AccountKey=< Storage Key for ContosoGeneral ends with == >;"
+Set-AzStorageBlobContent -Container "guestconfiguration" -File ./MyConfig.zip -Blob "guestconfiguration" -Context $Context
+```
+
 ## Create Azure Policy
 
 Create the Azure Policy template using this command.
