@@ -13,7 +13,9 @@ stages:
 
         steps:
           - task: PowerShell@2
+            displayName: Setting Modules and Compiling
             inputs:
+              pwsh: true
               targetType: 'inline'
               script: |
                 find-module PSDesiredStateConfiguration | install-module -Force
@@ -24,11 +26,11 @@ stages:
                 .\tls-config\tls.ps1
                 
                 dir
-              pwsh: true
 
                 dir tls
 
           - task: PowerShell@2
+            displayName: Creating zip package
             inputs:
               targetType: 'inline'
               script: |
