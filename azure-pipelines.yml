@@ -20,10 +20,11 @@ stages:
                 find-module PSDSCResources | install-module -Force
                 find-module GuestConfiguration | install-module -Force
                 find-module SChannelDsc | install-module -Force
-
+                
                 .\tls-config\tls.ps1
-
+                
                 dir
+              pwsh: true
 
 
               
