@@ -120,3 +120,20 @@ From the current understanding and usage of Azure Policy Guest Configuration, re
 ```powershell
 az policy remediation create --name myRemediation --policy-assignment '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policyAssignments/{myAssignmentId}'
 ```
+
+## Special Instructions for Naming
+It was found that in order for all the policy assignments to properly form and remediation to initiate, all names within the policy definition JSON file must be the same as the zip package that was uploaded to Azure storage. In creating these definitions, the names were found to not be the same, meaning that the JSON must be edited directly.
+
+## Creating a Policy Assignment and Remediation on Creation of Assignment
+To create the policy assignment, a separate command must be run. In addition, to create a proper managed identity for the assignment to remediate the resources, the remediation is also created with the series of commands.
+
+```powershell
+$policyDef = Get-AzPolicyDefinition -Id '{policyId}'
+$resourceGroup = Get-AzResourceGroup -Name '{resourceGroupName}'
+$assignment = New-AzPolicyAssignment -Name 'tls-secure' -DisplayName '{policyName}' -Scope $resourceGroup.ResourceId -PolicyDefinition $policyDef -Location '{location}' -IdentityType "SystemAssigned"
+```
+
+Then, the following command can be run in order to create a remediation task:
+```powershell
+Start-AzPolicyRemediation -Name 'myRemedation' -PolicyAssignmentId '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policyAssignments/{myAssignmentId}'
+```
