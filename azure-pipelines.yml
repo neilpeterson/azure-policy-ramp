@@ -9,7 +9,7 @@ stages:
       - job: ConfigPackaging
         displayName: Configuration Package Creation
         pool: 
-          vmImage: windows-2019
+          vmImage: windows-2022
 
         steps:
           - task: PowerShell@2
