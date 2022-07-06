@@ -20,7 +20,7 @@ stages:
                 # find-module PSDSCResources | install-module -Force
                 # find-module GuestConfiguration | install-module -Force
 
-                dir $(Agent.BuildDirectory)
+                dir $(Agent.BuildDirectory)/a
 
 
               
