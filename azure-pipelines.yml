@@ -16,10 +16,11 @@ stages:
             inputs:
               targetType: 'inline'
               script: |
-                find-module PSDesiredStateConfiguration | install-module -Force
-                find-module PSDSCResources | install-module -Force
-                find-module GuestConfiguration | install-module -Force
-
+                find-module PSDesiredStateConfiguration | install-module
+                find-module PSDSCResources | install-module
+                find-module GuestConfiguration | install-module
+                find-module SChannelDsc | install-module
+                
                 .\tls-config\tls.ps1
 
                 dir
