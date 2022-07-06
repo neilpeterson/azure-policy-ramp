@@ -29,14 +29,8 @@ stages:
 
                 dir tls
 
-                New-GuestConfigurationPackage -Name 'tls-secure' -Configuration './tls/localhost.mof' -Type AuditAndSet -Force
-
-          # - task: PowerShell@2
-          #   displayName: Creating zip package
-          #   inputs:
-          #     targetType: 'inline'
-          #     script: |
-          #       New-GuestConfigurationPackage -Name 'tls-secure' -Configuration './tls/localhost.mof' -Type AuditAndSet -Force
+                New-GuestConfigurationPackage -Name 'tls-secure' -Configuration './tls/localhost.mof' -Type AuditAndSet -Force -Path ./configs
+              
 
 
 
