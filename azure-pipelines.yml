@@ -25,5 +25,15 @@ stages:
 
                 dir
 
+                dir tls
+
+          - task: PowerShell@2
+            inputs:
+              targetType: 'inline'
+              script: |
+                New-GuestConfigurationPackage -Name 'tls-secure' -Configuration './tls/localhost.mof' -Type AuditAndSet -Force
+
+
+
 
               
