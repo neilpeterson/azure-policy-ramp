@@ -59,7 +59,13 @@ stages:
               pwsh: true
               targetType: 'inline'
               script: |
-                echo "$(Parameters.outputStorageUri)tls-secure.zip$(Parameters.outputStorageToken)"
+                find-module PSDesiredStateConfiguration | install-module -Force
+                find-module PSDSCResources | install-module -Force
+                find-module GuestConfiguration | install-module -Force
+                find-module SChannelDsc | install-module -Force
+                
+                $ContentURI = "$(Parameters.outputStorageUri)tls-secure.zip$(Parameters.outputStorageToken)"
+                echo $ContentURI
 
 
               
