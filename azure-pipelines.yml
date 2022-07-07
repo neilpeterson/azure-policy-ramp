@@ -57,7 +57,7 @@ stages:
               pwsh: true
               targetType: 'inline'
               script: |
-                $(Parameters.outputStorageUri)
+                echo $(Parameters.outputStorageUri)
 
 
               
