@@ -13,6 +13,7 @@ stages:
           
         variables:
           Parameters.outputStorageUri: ''
+          Parameters.outputStorageToken: ''
 
         steps:
 
@@ -49,6 +50,7 @@ stages:
               storage: 'azurepolicyabcd'
               ContainerName: 'guestconfiguration'
               outputStorageUri: Parameters.outputStorageUri
+              outputStorageContainerSasToken: Parameters.outputStorageToken
               sasTokenTimeOutInMinutes: '525600'
           
           - task: PowerShell@2
@@ -57,7 +59,7 @@ stages:
               pwsh: true
               targetType: 'inline'
               script: |
-                echo $(Parameters.outputStorageUri)
+                echo $(Parameters.outputStorageUri)/$(Parameters.outputStorageToken)
 
 
               
