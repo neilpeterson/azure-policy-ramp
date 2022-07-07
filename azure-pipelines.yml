@@ -65,7 +65,10 @@ stages:
                 find-module SChannelDsc | install-module -Force
                 
                 $ContentURI = "$(Parameters.outputStorageUri)tls-secure.zip$(Parameters.outputStorageToken)"
-                echo $ContentURI
+                
+                New-GuestConfigurationPolicy -PolicyId (New-Guid).Guid -ContentUri $ContentURI -DisplayName 'tls-secure' -Path './policies' -Platform 'Windows' -Description 'tls-secure' -PolicyVersion 1.0.0 -Mode ApplyAndAutoCorrect -Verbose
+
+                Get-Content .\policies\tls-secure_DeployIfNotExists.json
 
 
               
