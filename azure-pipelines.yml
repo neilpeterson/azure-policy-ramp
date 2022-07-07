@@ -10,6 +10,9 @@ stages:
         displayName: Configuration Package Creation
         pool: 
           vmImage: windows-2022
+          
+        variables:
+          ContentURI: ''
 
         steps:
 
@@ -46,16 +49,15 @@ stages:
               storage: 'azurepolicyabcd'
               ContainerName: 'guestconfiguration'
               outputStorageUri: 'ContentURI'
-              outputStorageContainerSasToken: 'ContentToken'
               sasTokenTimeOutInMinutes: '525600'
           
           - task: PowerShell@2
-            displayName: Creating Policyu
+            displayName: Creating Policy
             inputs:
               pwsh: true
               targetType: 'inline'
               script: |
-                echo $ContentURI
+                echo ContentURI
 
 
               
