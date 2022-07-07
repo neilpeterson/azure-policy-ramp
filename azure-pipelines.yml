@@ -59,7 +59,7 @@ stages:
               pwsh: true
               targetType: 'inline'
               script: |
-                echo "$(Parameters.outputStorageUri)tls-secure$(Parameters.outputStorageToken)"
+                echo "$(Parameters.outputStorageUri)tls-secure.zip$(Parameters.outputStorageToken)"
 
 
               
