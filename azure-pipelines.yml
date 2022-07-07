@@ -48,7 +48,7 @@ stages:
               Destination: 'AzureBlob'
               storage: 'azurepolicyabcd'
               ContainerName: 'guestconfiguration'
-              outputStorageUri: 'ContentURI'
+              outputStorageUri: ContentURI
               sasTokenTimeOutInMinutes: '525600'
           
           - task: PowerShell@2
@@ -57,7 +57,7 @@ stages:
               pwsh: true
               targetType: 'inline'
               script: |
-                echo ContentURI
+                echo $ContentURI
 
 
               
