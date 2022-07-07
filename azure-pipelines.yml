@@ -12,7 +12,7 @@ stages:
           vmImage: windows-2022
           
         variables:
-          ContentURI: ''
+          Parameters.outputStorageUri: ''
 
         steps:
 
@@ -48,7 +48,7 @@ stages:
               Destination: 'AzureBlob'
               storage: 'azurepolicyabcd'
               ContainerName: 'guestconfiguration'
-              outputStorageUri: ContentURI
+              outputStorageUri: Parameters.outputStorageUri
               sasTokenTimeOutInMinutes: '525600'
           
           - task: PowerShell@2
@@ -57,7 +57,7 @@ stages:
               pwsh: true
               targetType: 'inline'
               script: |
-                echo $ContentURI
+                $(Parameters.outputStorageUri)
 
 
               
