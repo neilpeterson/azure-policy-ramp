@@ -33,7 +33,7 @@ stages:
 
           - task: AzurePowerShell@5
             inputs:
-              azureSubscription: 'nepeters-arm-connection'
+              azureSubscription: 'shivam-arm-connection'
               ScriptType: 'InlineScript'
               Inline: 'Get-AzResourceGroup'
               azurePowerShellVersion: 'LatestVersion'
