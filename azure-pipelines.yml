@@ -38,13 +38,15 @@ stages:
                 dir tls
 
                 New-GuestConfigurationPackage -Name 'tls-secure' -Configuration './tls/localhost.mof' -Type AuditAndSet -Force
-          - task: AzureFileCopy@4
+          - task: AzureFileCopy@3
             inputs:
               SourcePath: '.\tls-secure.zip'
               azureSubscription: 'shivam-arm-connection'
               Destination: 'AzureBlob'
               storage: 'azurepolicyabcd'
               ContainerName: 'guestconfiguration'
+              outputStorageUri: 'ContentURI'
+              outputStorageContainerSasToken: 'ContentToken'
               sasTokenTimeOutInMinutes: '525600'
 
 
