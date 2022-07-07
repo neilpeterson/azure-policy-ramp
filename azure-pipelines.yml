@@ -12,6 +12,14 @@ stages:
           vmImage: windows-2022
 
         steps:
+
+          - task: AzurePowerShell@5
+            inputs:
+              azureSubscription: 'shivam-arm-connection'
+              ScriptType: 'InlineScript'
+              Inline: 'Get-AzResourceGroup'
+              azurePowerShellVersion: 'LatestVersion'
+
           - task: PowerShell@2
             displayName: Setting Modules and Compiling
             inputs:
@@ -29,16 +37,9 @@ stages:
 
                 dir tls
 
-                New-GuestConfigurationPackage -Name 'tls-secure' -Configuration './tls/localhost.mof' -Type AuditAndSet -Force -Path ./configs
+                New-GuestConfigurationPackage -Name 'tls-secure' -Configuration './tls/localhost.mof' -Type AuditAndSet -Force
+                
 
-          - task: AzurePowerShell@5
-            inputs:
-              azureSubscription: 'shivam-arm-connection'
-              ScriptType: 'InlineScript'
-              Inline: 'Get-AzResourceGroup'
-              azurePowerShellVersion: 'LatestVersion'
-
-              
 
 
 

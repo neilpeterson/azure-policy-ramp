@@ -26,6 +26,7 @@ Install the following PowerShell modules.
 find-module PSDesiredStateConfiguration | install-module
 find-module PSDSCResources | install-module
 find-module GuestConfiguration | install-module
+find-module SChannelDsc | install-module
 ```
 
 ## DSC Modules
