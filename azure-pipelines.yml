@@ -30,6 +30,14 @@ stages:
                 dir tls
 
                 New-GuestConfigurationPackage -Name 'tls-secure' -Configuration './tls/localhost.mof' -Type AuditAndSet -Force -Path ./configs
+
+          - task: AzurePowerShell@5
+            inputs:
+              azureSubscription: 'nepeters-arm-connection'
+              ScriptType: 'InlineScript'
+              Inline: 'Get-AzResourceGroup'
+              azurePowerShellVersion: 'LatestVersion'
+
               
 
 
