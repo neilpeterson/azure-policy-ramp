@@ -68,7 +68,15 @@ stages:
                 
                 New-GuestConfigurationPolicy -PolicyId (New-Guid).Guid -ContentUri $ContentURI -DisplayName 'tls-secure' -Path './policies' -Platform 'Windows' -Description 'tls-secure' -PolicyVersion 1.0.0 -Mode ApplyAndAutoCorrect -Verbose
 
-                Get-Content .\policies\tls-secure_DeployIfNotExists.json
+                $RawPolicy = Get-Content .\policies\tls-secure_DeployIfNotExists.json -raw
+                $PolicyObj = ConvertFrom-Json $RawPolicy
+
+                $PolicyObj.properties.policyRule.then.details.deployment.properties.parameters.assignmentName.value = "tls-secure"
+                $PolicyObj.properties.policyRule.then.details.name = "tls-secure"
+                $Out = ConvertTo-Json -InputObject $B -depth 32
+                Set-Content -Path .\policies\tls-secure_DeployIfNotExists.json -Value $Out
+
+                Get-Content .\policies\tls-secure_DeployIfNotExists.json -raw
 
 
               
