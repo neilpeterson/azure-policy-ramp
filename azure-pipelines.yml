@@ -82,6 +82,7 @@ stages:
                 Set-Content -Path .\policies\tls-secure_DeployIfNotExists.json -Value $Out
           
           - task: AzurePowerShell@5
+            displayName: Create Assignment and Remediation
             inputs:
               azureSubscription: 'shivam-arm-connection'
               ScriptType: 'InlineScript'
@@ -90,7 +91,14 @@ stages:
                 Get-Content .\policies\tls-secure_DeployIfNotExists.json
                 $Policy = New-AzPolicyDefinition -Name 'tls-secure' -Policy .\policies\tls-secure_DeployIfNotExists.json
                 $Policy
+
+                $policyDef = Get-AzPolicyDefinition -Id '$Policy.PolicyDefinitionId'
+                $resourceGroup = Get-AzResourceGroup -Name 'myResourceGroupName'
+                $assignment = New-AzPolicyAssignment -Name 'tls-secure' -DisplayName 'tls-secure' -Scope $resourceGroup.ResourceId -PolicyDefinition $policyDef -Location 'centralus' -IdentityType "SystemAssigned"
+
+                
               azurePowerShellVersion: 'LatestVersion'
+          
             
 
               
