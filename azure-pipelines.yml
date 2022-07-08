@@ -90,6 +90,7 @@ stages:
               azureSubscription: 'shivam-arm-connection'
               ScriptType: 'InlineScript'
               Inline: |
+                Get-Content .\policies\tls-secure_DeployIfNotExists.json
                 $Policy = New-AzPolicyDefinition -Name 'tls-secure' -Policy .\policies\tls-secure_DeployIfNotExists.json
                 $Policy
               azurePowerShellVersion: 'LatestVersion'
