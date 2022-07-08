@@ -73,7 +73,7 @@ stages:
 
                 $PolicyObj.properties.policyRule.then.details.deployment.properties.parameters.assignmentName.value = "tls-secure"
                 $PolicyObj.properties.policyRule.then.details.name = "tls-secure"
-                $Out = ConvertTo-Json -InputObject $B -depth 32
+                $Out = ConvertTo-Json -InputObject $PolicyObj -depth 32
                 Set-Content -Path .\policies\tls-secure_DeployIfNotExists.json -Value $Out
 
                 Get-Content .\policies\tls-secure_DeployIfNotExists.json -raw
