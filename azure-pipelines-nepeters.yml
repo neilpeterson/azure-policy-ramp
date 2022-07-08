@@ -47,7 +47,7 @@ stages:
               SourcePath: '.\tls-secure.zip'
               azureSubscription: 'nepeters-arm-connection'
               Destination: 'AzureBlob'
-              storage: 'azurepolicyabcd'
+              storage: 'azurepolicycdef'
               ContainerName: 'guestconfiguration'
               outputStorageUri: Parameters.outputStorageUri
               outputStorageContainerSasToken: Parameters.outputStorageToken
