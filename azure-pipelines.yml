@@ -63,7 +63,6 @@ stages:
                 find-module PSDSCResources | install-module -Force
                 find-module GuestConfiguration | install-module -Force
                 find-module SChannelDsc | install-module -Force
-                find-module Az.Resources | install-module -Force
                 
                 $ContentURI = "$(Parameters.outputStorageUri)tls-secure.zip$(Parameters.outputStorageToken)"
                 
@@ -79,7 +78,7 @@ stages:
 
                 Get-Command -Module 'GuestConfiguration'
 
-                $Policy = New-AzPolicyDefinition -Name 'tls-secure' -Policy .\policies\tls-secure_DeployIfNotExists.json
+                $Policy = New-AzureRmPolicyDefinition -Name 'tls-secure' -Policy .\policies\tls-secure_DeployIfNotExists.json
                 $Policy
 
 
