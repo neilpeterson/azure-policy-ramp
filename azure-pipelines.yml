@@ -92,7 +92,7 @@ stages:
                 $Policy = New-AzPolicyDefinition -Name 'tls-secure' -Policy .\policies\tls-secure_DeployIfNotExists.json
                 $Policy
 
-                $policyDef = Get-AzPolicyDefinition -Id '$Policy.PolicyDefinitionId'
+                $policyDef = Get-AzPolicyDefinition -Id $Policy.PolicyDefinitionId
                 $resourceGroup = Get-AzResourceGroup -Name 'myResourceGroupName'
                 $resourceGroup.ResourceId
                 $assignment = New-AzPolicyAssignment -Name 'tls-secure' -DisplayName 'tls-secure' -Scope $resourceGroup.ResourceId -PolicyDefinition $policyDef -Location 'centralus' -IdentityType "SystemAssigned"
