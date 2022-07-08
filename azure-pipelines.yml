@@ -75,16 +75,7 @@ stages:
                 $PolicyObj.properties.policyRule.then.details.name = "tls-secure"
                 $Out = ConvertTo-Json -InputObject $PolicyObj -depth 32
                 Set-Content -Path .\policies\tls-secure_DeployIfNotExists.json -Value $Out
-            
-  - stage: DeployTest
-    dependsOn: Build
-    jobs:
-      - job: PolicyAssignments
-        displayName: Configuration Package Creation
-        pool: 
-          vmImage: windows-2022
-        
-        steps:
+          
           - task: AzurePowerShell@5
             inputs:
               azureSubscription: 'shivam-arm-connection'
@@ -95,5 +86,6 @@ stages:
                 $Policy = New-AzPolicyDefinition -Name 'tls-secure' -Policy .\policies\tls-secure_DeployIfNotExists.json
                 $Policy
               azurePowerShellVersion: 'LatestVersion'
+            
 
               
