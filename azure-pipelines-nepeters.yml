@@ -1,5 +1,10 @@
-trigger: 
-  - main
+trigger:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+      - azure-pipelines-nepeters.yml
 
 stages:
   - stage: Build
