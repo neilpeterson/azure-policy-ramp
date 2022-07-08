@@ -76,7 +76,8 @@ stages:
                 $Out = ConvertTo-Json -InputObject $PolicyObj -depth 32
                 Set-Content -Path .\policies\tls-secure_DeployIfNotExists.json -Value $Out
 
-                Get-Content .\policies\tls-secure_DeployIfNotExists.json -raw
+                $Policy = New-AzPolicyDefinition -Name 'tls-secure' -Policy .\policies\tls-secure_DeployIfNotExists.json
+                $Policy
 
 
               
