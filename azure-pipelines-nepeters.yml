@@ -6,6 +6,8 @@ trigger:
     include:
       - azure-pipelines-nepeters.yml
 
+# Test trigger
+
 stages:
   - stage: Build
     dependsOn: []
