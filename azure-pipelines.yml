@@ -66,25 +66,17 @@ stages:
             buildType: 'current'
             artifactName: 'tls-secure'
             targetPath: '.\'
-        
-        - task: PowerShell@2
-          displayName: Setting Modules and Compiling
-          inputs:
-            pwsh: true
-            targetType: 'inline'
-            script: |
-              dir
 
-          # - task: AzureFileCopy@3
-          #   inputs:
-          #     SourcePath: '.\tls-secure.zip'
-          #     azureSubscription: 'shivam-arm-connection'
-          #     Destination: 'AzureBlob'
-          #     storage: 'azurepolicyabcd'
-          #     ContainerName: 'guestconfiguration'
-          #     outputStorageUri: Parameters.outputStorageUri
-          #     outputStorageContainerSasToken: Parameters.outputStorageToken
-          #     sasTokenTimeOutInMinutes: '525600'        
+        - task: AzureFileCopy@3
+          inputs:
+            SourcePath: '.\tls-secure.zip'
+            azureSubscription: 'shivam-arm-connection'
+            Destination: 'AzureBlob'
+            storage: 'azurepolicyabcd'
+            ContainerName: 'guestconfiguration'
+            outputStorageUri: Parameters.outputStorageUri
+            outputStorageContainerSasToken: Parameters.outputStorageToken
+            sasTokenTimeOutInMinutes: '525600'        
           # - task: PowerShell@2
           #   displayName: Creating Policy
           #   inputs:
