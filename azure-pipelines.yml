@@ -97,8 +97,10 @@ stages:
                 $resourceGroup.ResourceId
                 $assignment = New-AzPolicyAssignment -Name 'tls-secure' -DisplayName 'tls-secure' -Scope $resourceGroup.ResourceId -PolicyDefinition $policyDef -Location 'centralus' -IdentityType "SystemAssigned"
                 
-                $roleDefinitionIds = $policyDef.Properties.policyRule.then.details.roleDefinitionIds
+                echo "Made assignment."
 
+                $roleDefinitionIds = $policyDef.Properties.policyRule.then.details.roleDefinitionIds
+              
                 if ($roleDefinitionIds.Count -gt 0)
                 {
                     $roleDefinitionIds | ForEach-Object {
@@ -107,7 +109,8 @@ stages:
                     }
                 }
                 
-                $assignment
+                echo "Granted privileges."
+
                 Start-AzPolicyRemediation -Name 'myRemedation' -PolicyAssignmentId $assignment.PolicyAssignmentId -ResourceGroupName myResourceGroupName
                 
 
