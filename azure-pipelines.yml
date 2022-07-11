@@ -111,6 +111,8 @@ stages:
                 
                 echo "Granted privileges."
 
+                Start-Sleep -Seconds 60
+
                 Start-AzPolicyRemediation -Name 'myRemedation' -PolicyAssignmentId $assignment.PolicyAssignmentId -ResourceGroupName myResourceGroupName
                 
 
