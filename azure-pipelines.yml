@@ -47,7 +47,7 @@ stages:
                 dir tls
 
                 New-GuestConfigurationPackage -Name 'tls-secure' -Configuration './tls/localhost.mof' -Type AuditAndSet -Path '.\packages' -Force
-                New-GuestConfigurationPackage -Name 'sample-test' -Configuration './tls/localhost.mof' -Type AuditAndSet -Path '.\packages' -Force
+                
           - task: AzureFileCopy@3
             inputs:
               SourcePath: '.\packages'
@@ -65,13 +65,15 @@ stages:
               pwsh: true
               targetType: 'inline'
               script: |
-                echo "$(Parameters.outputStorageUri)"
-                echo "$(Parameters.outputStorageToken)"
-                # find-module PSDesiredStateConfiguration | install-module -Force
-                # find-module PSDSCResources | install-module -Force
-                # find-module GuestConfiguration | install-module -Force
-                # find-module SChannelDsc | install-module -Force
+                find-module PSDesiredStateConfiguration | install-module -Force
+                find-module PSDSCResources | install-module -Force
+                find-module GuestConfiguration | install-module -Force
+                find-module SChannelDsc | install-module -Force
                 
+                Get-ChildItem -Path ".\packages" | 
+                ForEach-Object {
+                  echo $_.BaseName
+                }
                 # $ContentURI = "$(Parameters.outputStorageUri)tls-secure.zip$(Parameters.outputStorageToken)"
                 
                 # New-GuestConfigurationPolicy -PolicyId (New-Guid).Guid -ContentUri $ContentURI -DisplayName 'tls-secure' -Path './policies' -Platform 'Windows' -Description 'tls-secure' -PolicyVersion 1.0.0 -Mode ApplyAndAutoCorrect -Verbose
