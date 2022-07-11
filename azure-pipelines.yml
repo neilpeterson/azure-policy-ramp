@@ -46,10 +46,10 @@ stages:
 
                 dir tls
 
-                New-GuestConfigurationPackage -Name 'tls-secure' -Configuration './tls/localhost.mof' -Type AuditAndSet -Path '.\configs' -Force
+                New-GuestConfigurationPackage -Name 'tls-secure' -Configuration './tls/localhost.mof' -Type AuditAndSet -Path '.\packages' -Force
           - task: AzureFileCopy@3
             inputs:
-              SourcePath: '.\configs\tls-secure.zip'
+              SourcePath: '.\packages'
               azureSubscription: 'shivam-arm-connection'
               Destination: 'AzureBlob'
               storage: 'azurepolicyabcd'
@@ -58,65 +58,65 @@ stages:
               outputStorageContainerSasToken: Parameters.outputStorageToken
               sasTokenTimeOutInMinutes: '525600'
           
-          - task: PowerShell@2
-            displayName: Creating Policy
-            inputs:
-              pwsh: true
-              targetType: 'inline'
-              script: |
-                find-module PSDesiredStateConfiguration | install-module -Force
-                find-module PSDSCResources | install-module -Force
-                find-module GuestConfiguration | install-module -Force
-                find-module SChannelDsc | install-module -Force
+          # - task: PowerShell@2
+          #   displayName: Creating Policy
+          #   inputs:
+          #     pwsh: true
+          #     targetType: 'inline'
+          #     script: |
+          #       find-module PSDesiredStateConfiguration | install-module -Force
+          #       find-module PSDSCResources | install-module -Force
+          #       find-module GuestConfiguration | install-module -Force
+          #       find-module SChannelDsc | install-module -Force
                 
-                $ContentURI = "$(Parameters.outputStorageUri)tls-secure.zip$(Parameters.outputStorageToken)"
+          #       $ContentURI = "$(Parameters.outputStorageUri)tls-secure.zip$(Parameters.outputStorageToken)"
                 
-                New-GuestConfigurationPolicy -PolicyId (New-Guid).Guid -ContentUri $ContentURI -DisplayName 'tls-secure' -Path './policies' -Platform 'Windows' -Description 'tls-secure' -PolicyVersion 1.0.0 -Mode ApplyAndAutoCorrect -Verbose
+          #       New-GuestConfigurationPolicy -PolicyId (New-Guid).Guid -ContentUri $ContentURI -DisplayName 'tls-secure' -Path './policies' -Platform 'Windows' -Description 'tls-secure' -PolicyVersion 1.0.0 -Mode ApplyAndAutoCorrect -Verbose
 
-                $RawPolicy = Get-Content .\policies\tls-secure_DeployIfNotExists.json -raw
-                $PolicyObj = ConvertFrom-Json $RawPolicy
+          #       $RawPolicy = Get-Content .\policies\tls-secure_DeployIfNotExists.json -raw
+          #       $PolicyObj = ConvertFrom-Json $RawPolicy
 
-                $PolicyObj.properties.policyRule.then.details.deployment.properties.parameters.assignmentName.value = "tls-secure"
-                $PolicyObj.properties.policyRule.then.details.name = "tls-secure"
-                $Out = ConvertTo-Json -InputObject $PolicyObj -depth 32
-                Set-Content -Path .\policies\tls-secure_DeployIfNotExists.json -Value $Out
+          #       $PolicyObj.properties.policyRule.then.details.deployment.properties.parameters.assignmentName.value = "tls-secure"
+          #       $PolicyObj.properties.policyRule.then.details.name = "tls-secure"
+          #       $Out = ConvertTo-Json -InputObject $PolicyObj -depth 32
+          #       Set-Content -Path .\policies\tls-secure_DeployIfNotExists.json -Value $Out
           
-          - task: AzurePowerShell@5
-            displayName: Create Assignment and Remediation
-            inputs:
-              azureSubscription: 'shivam-arm-connection'
-              ScriptType: 'InlineScript'
-              Inline: |
-                dir
-                Get-Content .\policies\tls-secure_DeployIfNotExists.json
-                $Policy = New-AzPolicyDefinition -Name 'tls-secure' -Policy .\policies\tls-secure_DeployIfNotExists.json
-                $Policy
+          # - task: AzurePowerShell@5
+          #   displayName: Create Assignment and Remediation
+          #   inputs:
+          #     azureSubscription: 'shivam-arm-connection'
+          #     ScriptType: 'InlineScript'
+          #     Inline: |
+          #       dir
+          #       Get-Content .\policies\tls-secure_DeployIfNotExists.json
+          #       $Policy = New-AzPolicyDefinition -Name 'tls-secure' -Policy .\policies\tls-secure_DeployIfNotExists.json
+          #       $Policy
 
-                $policyDef = Get-AzPolicyDefinition -Id $Policy.PolicyDefinitionId
-                $resourceGroup = Get-AzResourceGroup -Name 'myResourceGroupName'
-                $resourceGroup.ResourceId
-                $assignment = New-AzPolicyAssignment -Name 'tls-secure' -DisplayName 'tls-secure' -Scope $resourceGroup.ResourceId -PolicyDefinition $policyDef -Location 'centralus' -IdentityType "SystemAssigned"
+          #       $policyDef = Get-AzPolicyDefinition -Id $Policy.PolicyDefinitionId
+          #       $resourceGroup = Get-AzResourceGroup -Name 'myResourceGroupName'
+          #       $resourceGroup.ResourceId
+          #       $assignment = New-AzPolicyAssignment -Name 'tls-secure' -DisplayName 'tls-secure' -Scope $resourceGroup.ResourceId -PolicyDefinition $policyDef -Location 'centralus' -IdentityType "SystemAssigned"
                 
-                echo "Made assignment."
+          #       echo "Made assignment."
 
-                $roleDefinitionIds = $policyDef.Properties.policyRule.then.details.roleDefinitionIds
+          #       $roleDefinitionIds = $policyDef.Properties.policyRule.then.details.roleDefinitionIds
               
-                if ($roleDefinitionIds.Count -gt 0)
-                {
-                    $roleDefinitionIds | ForEach-Object {
-                        $roleDefId = $_.Split("/") | Select-Object -Last 1
-                        New-AzRoleAssignment -Scope $resourceGroup.ResourceId -ObjectId $assignment.Identity.PrincipalId -RoleDefinitionId $roleDefId
-                    }
-                }
+          #       if ($roleDefinitionIds.Count -gt 0)
+          #       {
+          #           $roleDefinitionIds | ForEach-Object {
+          #               $roleDefId = $_.Split("/") | Select-Object -Last 1
+          #               New-AzRoleAssignment -Scope $resourceGroup.ResourceId -ObjectId $assignment.Identity.PrincipalId -RoleDefinitionId $roleDefId
+          #           }
+          #       }
                 
-                echo "Granted privileges."
+          #       echo "Granted privileges."
 
-                Start-Sleep -Seconds 60
+          #       Start-Sleep -Seconds 60
 
-                Start-AzPolicyRemediation -Name 'myRemedation' -PolicyAssignmentId $assignment.PolicyAssignmentId -ResourceGroupName myResourceGroupName
+          #       Start-AzPolicyRemediation -Name 'myRemedation' -PolicyAssignmentId $assignment.PolicyAssignmentId -ResourceGroupName myResourceGroupName
                 
 
-              azurePowerShellVersion: 'LatestVersion'
+          #     azurePowerShellVersion: 'LatestVersion'
           
             
 
