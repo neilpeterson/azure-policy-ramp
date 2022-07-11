@@ -75,8 +75,6 @@ stages:
             script: |
               dir
 
-        
-
           # - task: AzureFileCopy@3
           #   inputs:
           #     SourcePath: '.\tls-secure.zip'
@@ -143,7 +141,7 @@ stages:
           #       Start-AzPolicyRemediation -Name 'myRemedation' -PolicyAssignmentId $assignment.PolicyAssignmentId -ResourceGroupName myResourceGroupName
                 
 
-              azurePowerShellVersion: 'LatestVersion'
+              # azurePowerShellVersion: 'LatestVersion'
           
             
 
