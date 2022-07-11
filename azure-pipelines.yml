@@ -46,7 +46,7 @@ stages:
 
                 dir tls
 
-                New-GuestConfigurationPackage -Name 'tls-secure' -Configuration './tls/localhost.mof' -Type AuditAndSet -Force
+                New-GuestConfigurationPackage -Name 'tls-secure' -Configuration './tls/localhost.mof' -Type AuditAndSet -Path '.\configs' -Force
           - task: AzureFileCopy@3
             inputs:
               SourcePath: '.\tls-secure.zip'
