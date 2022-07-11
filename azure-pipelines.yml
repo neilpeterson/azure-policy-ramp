@@ -49,7 +49,7 @@ stages:
                 New-GuestConfigurationPackage -Name 'tls-secure' -Configuration './tls/localhost.mof' -Type AuditAndSet -Path '.\configs' -Force
           - task: AzureFileCopy@3
             inputs:
-              SourcePath: '.\tls-secure.zip'
+              SourcePath: '.\configs\tls-secure.zip'
               azureSubscription: 'shivam-arm-connection'
               Destination: 'AzureBlob'
               storage: 'azurepolicyabcd'
