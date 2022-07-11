@@ -108,7 +108,7 @@ stages:
                 }
                 
                 $assignment
-                Start-AzPolicyRemediation -Name 'myRemedation' -PolicyAssignmentId $assignment.PolicyAssignmentId
+                Start-AzPolicyRemediation -Name 'myRemedation' -PolicyAssignmentId $assignment.PolicyAssignmentId -ResourceGroupName myResourceGroupName
                 
 
               azurePowerShellVersion: 'LatestVersion'
