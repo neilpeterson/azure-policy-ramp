@@ -21,14 +21,6 @@ stages:
           Parameters.outputStorageToken: ''
 
         steps:
-
-          - task: AzurePowerShell@5
-            inputs:
-              azureSubscription: 'shivam-arm-connection'
-              ScriptType: 'InlineScript'
-              Inline: 'Get-AzResourceGroup'
-              azurePowerShellVersion: 'LatestVersion'
-
           - task: PowerShell@2
             displayName: Setting Modules and Compiling
             inputs:
@@ -41,12 +33,9 @@ stages:
                 find-module SChannelDsc | install-module -Force
                 
                 .\tls-config\tls.ps1
-                
-                dir
-
-                dir tls
 
                 New-GuestConfigurationPackage -Name 'tls-secure' -Configuration './tls/localhost.mof' -Type AuditAndSet -Force
+          
           - task: PublishPipelineArtifact@1
             inputs:
               targetPath: .\tls-secure.zip
@@ -77,6 +66,7 @@ stages:
             outputStorageUri: Parameters.outputStorageUri
             outputStorageContainerSasToken: Parameters.outputStorageToken
             sasTokenTimeOutInMinutes: '525600'        
+        
         - task: PowerShell@2
           displayName: Creating Policy
           inputs:
@@ -105,9 +95,9 @@ stages:
           inputs:
             azureSubscription: 'shivam-arm-connection'
             ScriptType: 'InlineScript'
+            azurePowerShellVersion: 'LatestVersion'
             Inline: |
-              dir
-              Get-Content .\policies\tls-secure_DeployIfNotExists.json
+            
               $Policy = New-AzPolicyDefinition -Name 'tls-secure' -Policy .\policies\tls-secure_DeployIfNotExists.json
               $Policy
 
@@ -115,25 +105,7 @@ stages:
               $resourceGroup = Get-AzResourceGroup -Name 'myResourceGroupName'
               $resourceGroup.ResourceId
               $assignment = New-AzPolicyAssignment -Name 'tls-secure' -DisplayName 'tls-secure' -Scope $resourceGroup.ResourceId -PolicyDefinition $policyDef -Location 'centralus' -IdentityType "SystemAssigned"
-
-
-              # $roleDefinitionIds = $policyDef.Properties.policyRule.then.details.roleDefinitionIds
-            
-              # if ($roleDefinitionIds.Count -gt 0)
-              # {
-              #     $roleDefinitionIds | ForEach-Object {
-              #         $roleDefId = $_.Split("/") | Select-Object -Last 1
-              #         New-AzRoleAssignment -Scope $resourceGroup.ResourceId -ObjectId $assignment.Identity.PrincipalId -RoleDefinitionId $roleDefId
-              #     }
-              # }
               
-
               Start-Sleep -Seconds 60
 
               Start-AzPolicyRemediation -Name 'myRemedation' -PolicyAssignmentId $assignment.PolicyAssignmentId -ResourceGroupName myResourceGroupName
-
-            azurePowerShellVersion: 'LatestVersion'
-          
-            
-
-              
