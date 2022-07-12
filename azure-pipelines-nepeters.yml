@@ -34,12 +34,12 @@ stages:
                 
                 .\tls-config\tls.ps1
 
-                New-GuestConfigurationPackage -Name 'tls-secure' -Configuration './tls-secure/localhost.mof' -Type AuditAndSet -Force
+                New-GuestConfigurationPackage -Name 'tlssecure' -Configuration './tlssecure/localhost.mof' -Type AuditAndSet -Force
           
           - task: PublishPipelineArtifact@1
             inputs:
-              targetPath: .\tls-secure.zip
-              artifactName: tls-secure
+              targetPath: .\tlssecure.zip
+              artifactName: tlssecure
 
   - stage: DeployTest
     dependsOn: Build
@@ -53,12 +53,12 @@ stages:
         - task: DownloadPipelineArtifact@2
           inputs:
             buildType: 'current'
-            artifactName: 'tls-secure'
+            artifactName: 'tlssecure'
             targetPath: '.\'
 
         - task: AzureFileCopy@3
           inputs:
-            SourcePath: '.\tls-secure.zip'
+            SourcePath: '.\tlssecure.zip'
             azureSubscription: 'nepeters-arm-connection'
             Destination: 'AzureBlob'
             storage: 'azurepolicycdef'
@@ -78,17 +78,17 @@ stages:
               find-module GuestConfiguration | install-module -Force
               find-module SChannelDsc | install-module -Force
                 
-              $ContentURI = "$(Parameters.outputStorageUri)tls-secure.zip$(Parameters.outputStorageToken)"
+              $ContentURI = "$(Parameters.outputStorageUri)tlssecure.zip$(Parameters.outputStorageToken)"
                 
-              New-GuestConfigurationPolicy -PolicyId (New-Guid).Guid -ContentUri $ContentURI -DisplayName 'tls-secure' -Path './policies' -Platform 'Windows' -Description 'tls-secure' -PolicyVersion 1.0.0 -Mode ApplyAndAutoCorrect -Verbose
+              New-GuestConfigurationPolicy -PolicyId (New-Guid).Guid -ContentUri $ContentURI -DisplayName 'tlssecure' -Path './policies' -Platform 'Windows' -Description 'tlssecure' -PolicyVersion 1.0.0 -Mode ApplyAndAutoCorrect -Verbose
 
-              $RawPolicy = Get-Content .\policies\tls-secure_DeployIfNotExists.json -raw
+              $RawPolicy = Get-Content .\policies\tlssecure_DeployIfNotExists.json -raw
               $PolicyObj = ConvertFrom-Json $RawPolicy
 
-              $PolicyObj.properties.policyRule.then.details.deployment.properties.parameters.assignmentName.value = "tls-secure"
-              $PolicyObj.properties.policyRule.then.details.name = "tls-secure"
+              $PolicyObj.properties.policyRule.then.details.deployment.properties.parameters.assignmentName.value = "tlssecure"
+              $PolicyObj.properties.policyRule.then.details.name = "tlssecure"
               $Out = ConvertTo-Json -InputObject $PolicyObj -depth 32
-              Set-Content -Path .\policies\tls-secure_DeployIfNotExists.json -Value $Out
+              Set-Content -Path .\policies\tlssecure_DeployIfNotExists.json -Value $Out
           
         - task: AzurePowerShell@5
           displayName: Create Assignment and Remediation
@@ -98,12 +98,12 @@ stages:
             azurePowerShellVersion: 'LatestVersion'
             Inline: |
             
-              $Policy = New-AzPolicyDefinition -Name 'tls-secure' -Policy .\policies\tls-secure_DeployIfNotExists.json
+              $Policy = New-AzPolicyDefinition -Name 'tlssecure' -Policy .\policies\tlssecure_DeployIfNotExists.json
 
         #       $policyDef = Get-AzPolicyDefinition -Id $Policy.PolicyDefinitionId
         #       $resourceGroup = Get-AzResourceGroup -Name 'test-001'
         #       $resourceGroup.ResourceId
-              # $assignment = New-AzPolicyAssignment -Name 'tls-secure' -DisplayName 'tls-secure' -Scope $resourceGroup.ResourceId -PolicyDefinition $policyDef -Location 'centralus' -IdentityType "SystemAssigned"
+              # $assignment = New-AzPolicyAssignment -Name 'tlssecure' -DisplayName 'tlssecure' -Scope $resourceGroup.ResourceId -PolicyDefinition $policyDef -Location 'centralus' -IdentityType "SystemAssigned"
 
               # # Use the $policyDef to get to the roleDefinitionIds array
               # $roleDefinitionIds = $policyDef.Properties.policyRule.then.details.roleDefinitionIds

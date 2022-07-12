@@ -1,4 +1,4 @@
-Configuration tls-secure {
+Configuration tlssecure {
 
     Import-DscResource -ModuleName PSDscResources
     Import-DscResource -ModuleName SChannelDsc
