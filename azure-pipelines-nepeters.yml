@@ -103,7 +103,7 @@ stages:
               $policyDef = Get-AzPolicyDefinition -Id $Policy.PolicyDefinitionId
               $resourceGroup = Get-AzResourceGroup -Name 'test-001'
               $resourceGroup.ResourceId
-              $assignment = New-AzPolicyAssignment -Name 'tls-secure' -DisplayName 'tls-secure' -Scope $resourceGroup.ResourceId -PolicyDefinition $policyDef -Location 'centralus' -IdentityType "UserAssigned" -IdentityId '268ab7ad-035d-4194-9ebe-81efde9a3d40'
+              $assignment = New-AzPolicyAssignment -Name 'tls-secure' -DisplayName 'tls-secure' -Scope $resourceGroup.ResourceId -PolicyDefinition $policyDef -Location 'centralus' -IdentityType "UserAssigned" -IdentityId '/subscriptions/7dba16b0-223a-47ee-961c-35f04590c547/resourcegroups/dsc-config/providers/Microsoft.ManagedIdentity/userAssignedIdentities/policy-write'
 
               # # Use the $policyDef to get to the roleDefinitionIds array
               # $roleDefinitionIds = $policyDef.Properties.policyRule.then.details.roleDefinitionIds
