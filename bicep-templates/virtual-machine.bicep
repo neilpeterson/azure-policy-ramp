@@ -65,7 +65,7 @@ resource windowsVM 'Microsoft.Compute/virtualMachines@2020-12-01' = {
   }
   properties: {
     hardwareProfile: {
-      vmSize: 'Standard_DS1'
+      vmSize: 'Standard_D3_v2'
     }
     osProfile: {
       computerName: VMName
