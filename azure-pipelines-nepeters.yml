@@ -90,32 +90,32 @@ stages:
               $Out = ConvertTo-Json -InputObject $PolicyObj -depth 32
               Set-Content -Path .\policies\tls-secure_DeployIfNotExists.json -Value $Out
           
-        # - task: AzurePowerShell@5
-        #   displayName: Create Assignment and Remediation
-        #   inputs:
-        #     azureSubscription: 'nepeters-arm-connection'
-        #     ScriptType: 'InlineScript'
-        #     azurePowerShellVersion: 'LatestVersion'
-        #     Inline: |
+        - task: AzurePowerShell@5
+          displayName: Create Assignment and Remediation
+          inputs:
+            azureSubscription: 'nepeters-arm-connection'
+            ScriptType: 'InlineScript'
+            azurePowerShellVersion: 'LatestVersion'
+            Inline: |
             
-        #       $Policy = New-AzPolicyDefinition -Name 'tls-secure' -Policy .\policies\tls-secure_DeployIfNotExists.json
+              $Policy = New-AzPolicyDefinition -Name 'tls-secure' -Policy .\policies\tls-secure_DeployIfNotExists.json
 
         #       $policyDef = Get-AzPolicyDefinition -Id $Policy.PolicyDefinitionId
         #       $resourceGroup = Get-AzResourceGroup -Name 'test-001'
         #       $resourceGroup.ResourceId
-              $assignment = New-AzPolicyAssignment -Name 'tls-secure' -DisplayName 'tls-secure' -Scope $resourceGroup.ResourceId -PolicyDefinition $policyDef -Location 'centralus' -IdentityType "SystemAssigned"
+              # $assignment = New-AzPolicyAssignment -Name 'tls-secure' -DisplayName 'tls-secure' -Scope $resourceGroup.ResourceId -PolicyDefinition $policyDef -Location 'centralus' -IdentityType "SystemAssigned"
 
-              # Use the $policyDef to get to the roleDefinitionIds array
-              $roleDefinitionIds = $policyDef.Properties.policyRule.then.details.roleDefinitionIds
+              # # Use the $policyDef to get to the roleDefinitionIds array
+              # $roleDefinitionIds = $policyDef.Properties.policyRule.then.details.roleDefinitionIds
 
-              if ($roleDefinitionIds.Count -gt 0)
-              {
-                  $roleDefinitionIds | ForEach-Object {
-                      $roleDefId = $_.Split("/") | Select-Object -Last 1
-                      New-AzRoleAssignment -Scope $resourceGroup.ResourceId -ObjectId $assignment.Identity.PrincipalId -RoleDefinitionId $roleDefId
-                  }
-              }
+              # if ($roleDefinitionIds.Count -gt 0)
+              # {
+              #     $roleDefinitionIds | ForEach-Object {
+              #         $roleDefId = $_.Split("/") | Select-Object -Last 1
+              #         New-AzRoleAssignment -Scope $resourceGroup.ResourceId -ObjectId $assignment.Identity.PrincipalId -RoleDefinitionId $roleDefId
+              #     }
+              # }
 
-              Start-Sleep -Seconds 300
+              # Start-Sleep -Seconds 300
 
-              Start-AzPolicyRemediation -Name 'myRemedation' -PolicyAssignmentId $assignment.PolicyAssignmentId -ResourceGroupName test-001
+              # Start-AzPolicyRemediation -Name 'myRemedation' -PolicyAssignmentId $assignment.PolicyAssignmentId -ResourceGroupName test-001
