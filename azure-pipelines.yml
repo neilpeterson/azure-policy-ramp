@@ -101,22 +101,25 @@ stages:
               $Policy = New-AzPolicyDefinition -Name 'tls-secure' -Policy .\policies\tls-secure_DeployIfNotExists.json
               $Policy
 
-              # $policyDef = Get-AzPolicyDefinition -Id $Policy.PolicyDefinitionId
-              # $resourceGroup = Get-AzResourceGroup -Name 'myResourceGroupName'
-              # $resourceGroup.ResourceId
-              # $assignment = New-AzPolicyAssignment -Name 'tls-secure' -DisplayName 'tls-secure' -Scope $resourceGroup.ResourceId -PolicyDefinition $policyDef -Location 'centralus' -IdentityType "SystemAssigned"
-              
-              # # Use the $policyDef to get to the roleDefinitionIds array
-              # $roleDefinitionIds = $policyDef.Properties.policyRule.then.details.roleDefinitionIds
+              Remove-AzPolicyAssignment -Id "/subscriptions/2743a8a0-5c2d-409c-8d8c-713bd8f1e619/providers/Microsoft.Authorization/policyAssignments/tls-secure"
 
-              # if ($roleDefinitionIds.Count -gt 0)
-              # {
-              #     $roleDefinitionIds | ForEach-Object {
-              #         $roleDefId = $_.Split("/") | Select-Object -Last 1
-              #         New-AzRoleAssignment -Scope $resourceGroup.ResourceId -ObjectId $assignment.Identity.PrincipalId -RoleDefinitionId $roleDefId
-              #     }
-              # }
+              $policyDef = Get-AzPolicyDefinition -Id $Policy.PolicyDefinitionId
+              $resourceGroup = Get-AzResourceGroup -Name 'myResourceGroupName'
+              $resourceGroup.ResourceId
+              $assignment = New-AzPolicyAssignment -Name 'tls-secure' -DisplayName 'tls-secure' -Scope $resourceGroup.ResourceId -PolicyDefinition $policyDef -Location 'centralus' -IdentityType "SystemAssigned"
 
-              # Start-Sleep -Seconds 60
+              $roleDefinitionIds = $policyDef.Properties.policyRule.then.details.roleDefinitionIds
 
-              # Start-AzPolicyRemediation -Name 'myRemedation' -PolicyAssignmentId $assignment.PolicyAssignmentId -ResourceGroupName myResourceGroupName
+              Start-Sleep -Seconds 10
+
+              if ($roleDefinitionIds.Count -gt 0)
+              {
+                  $roleDefinitionIds | ForEach-Object {
+                      $roleDefId = $_.Split("/") | Select-Object -Last 1
+                      New-AzRoleAssignment -Scope $resourceGroup.ResourceId -ObjectId $assignment.Identity.PrincipalId -RoleDefinitionId $roleDefId
+                  }
+              }
+
+              Start-Sleep -Seconds 10
+
+              Start-AzPolicyRemediation -Name 'myRemedation' -PolicyAssignmentId $assignment.PolicyAssignmentId -ResourceGroupName myResourceGroupName -ResourceDiscoveryMode ReEvaluateCompliance
