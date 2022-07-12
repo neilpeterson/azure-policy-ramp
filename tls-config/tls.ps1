@@ -44,4 +44,4 @@ Configuration tlssecure {
     }
 }
 
-tls-secure
+tlssecure
