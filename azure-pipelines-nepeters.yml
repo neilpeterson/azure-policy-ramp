@@ -103,18 +103,18 @@ stages:
               $policyDef = Get-AzPolicyDefinition -Id $Policy.PolicyDefinitionId
               $resourceGroup = Get-AzResourceGroup -Name 'test-001'
               $resourceGroup.ResourceId
-              $assignment = New-AzPolicyAssignment -Name 'tls-secure' -DisplayName 'tls-secure' -Scope $resourceGroup.ResourceId -PolicyDefinition $policyDef -Location 'centralus' -IdentityType "SystemAssigned"
+              $assignment = New-AzPolicyAssignment -Name 'tls-secure' -DisplayName 'tls-secure' -Scope $resourceGroup.ResourceId -PolicyDefinition $policyDef -Location 'centralus' -IdentityType "UserAssigned" -IdentityId '268ab7ad-035d-4194-9ebe-81efde9a3d40'
 
-              # Use the $policyDef to get to the roleDefinitionIds array
-              $roleDefinitionIds = $policyDef.Properties.policyRule.then.details.roleDefinitionIds
+              # # Use the $policyDef to get to the roleDefinitionIds array
+              # $roleDefinitionIds = $policyDef.Properties.policyRule.then.details.roleDefinitionIds
 
-              if ($roleDefinitionIds.Count -gt 0)
-              {
-                  $roleDefinitionIds | ForEach-Object {
-                      $roleDefId = $_.Split("/") | Select-Object -Last 1
-                      New-AzRoleAssignment -Scope $resourceGroup.ResourceId -ObjectId $assignment.Identity.PrincipalId -RoleDefinitionId $roleDefId
-                  }
-              }
+              # if ($roleDefinitionIds.Count -gt 0)
+              # {
+              #     $roleDefinitionIds | ForEach-Object {
+              #         $roleDefId = $_.Split("/") | Select-Object -Last 1
+              #         New-AzRoleAssignment -Scope $resourceGroup.ResourceId -ObjectId $assignment.Identity.PrincipalId -RoleDefinitionId $roleDefId
+              #     }
+              # }
 
 
               Start-Sleep -Seconds 60
