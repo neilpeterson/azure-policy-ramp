@@ -110,7 +110,7 @@ stages:
 
               $roleDefinitionIds = $policyDef.Properties.policyRule.then.details.roleDefinitionIds
 
-              Start-Sleep -Seconds 10
+              Start-Sleep -Seconds 30
 
               if ($roleDefinitionIds.Count -gt 0)
               {
