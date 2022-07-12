@@ -44,4 +44,4 @@ Configuration tls-secure {
     }
 }
 
-tls
+tls-secure
