@@ -34,7 +34,7 @@ stages:
                 
                 .\tls-config\tls.ps1
 
-                New-GuestConfigurationPackage -Name 'tls-secure' -Configuration './tls/localhost.mof' -Type AuditAndSet -Force
+                New-GuestConfigurationPackage -Name 'tls-secure' -Configuration './tls-secure/localhost.mof' -Type AuditAndSet -Force
           
           - task: PublishPipelineArtifact@1
             inputs:
