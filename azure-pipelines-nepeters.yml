@@ -4,7 +4,7 @@ trigger:
     - main
   paths:
     include:
-      - azure-pipelines.yml
+      - azure-pipelines-nepeters.yml
 
 stages:
   - stage: Build
@@ -99,11 +99,10 @@ stages:
             Inline: |
             
               $Policy = New-AzPolicyDefinition -Name 'tls-secure' -Policy .\policies\tls-secure_DeployIfNotExists.json
-              $Policy
 
               $policyDef = Get-AzPolicyDefinition -Id $Policy.PolicyDefinitionId
-              $resourceGroup = Get-AzResourceGroup -Name 'myResourceGroupName'
+              $resourceGroup = Get-AzResourceGroup -Name 'test-001'
               $resourceGroup.ResourceId
               $assignment = New-AzPolicyAssignment -Name 'tls-secure' -DisplayName 'tls-secure' -Scope $resourceGroup.ResourceId -PolicyDefinition $policyDef -Location 'centralus' -IdentityType "SystemAssigned"
               Start-Sleep -Seconds 60
-              Start-AzPolicyRemediation -Name 'myRemedation' -PolicyAssignmentId $assignment.PolicyAssignmentId -ResourceGroupName testPolicyAssignment
+              Start-AzPolicyRemediation -Name 'myRemedation' -PolicyAssignmentId $assignment.PolicyAssignmentId -ResourceGroupName test-001
