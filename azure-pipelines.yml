@@ -51,90 +51,90 @@ stages:
               Rename-Item .\tls-secure_signed.zip tls-secure.zip
               dir
         
-  #         - task: PublishPipelineArtifact@1
-  #           inputs:
-  #             targetPath: .\tls-secure.zip
-  #             artifactName: tls-secure
+        - task: PublishPipelineArtifact@1
+          inputs:
+            targetPath: .\tls-secure.zip
+            artifactName: tls-secure
 
-  # - stage: DeployTest
-  #   dependsOn: Build
-  #   jobs:
-  #     - job: PolicyCreation
-  #       displayName: Azure Policy Implementation
-  #       pool: 
-  #         vmImage: windows-2022
+  - stage: DeployTest
+    dependsOn: Build
+    jobs:
+      - job: PolicyCreation
+        displayName: Azure Policy Implementation
+        pool: 
+          vmImage: windows-2022
         
-  #       steps:
-  #       - task: DownloadPipelineArtifact@2
-  #         inputs:
-  #           buildType: 'current'
-  #           artifactName: 'tls-secure'
-  #           targetPath: '.\'
+        steps:
+        - task: DownloadPipelineArtifact@2
+          inputs:
+            buildType: 'current'
+            artifactName: 'tls-secure'
+            targetPath: '.\'
 
-  #       - task: AzureFileCopy@3
-  #         inputs:
-  #           SourcePath: '.\tls-secure.zip'
-  #           azureSubscription: 'shivam-arm-connection'
-  #           Destination: 'AzureBlob'
-  #           storage: 'azurepolicyabcd'
-  #           ContainerName: 'guestconfiguration'
-  #           outputStorageUri: Parameters.outputStorageUri
-  #           outputStorageContainerSasToken: Parameters.outputStorageToken
-  #           sasTokenTimeOutInMinutes: '525600'        
+        - task: AzureFileCopy@3
+          inputs:
+            SourcePath: '.\tls-secure.zip'
+            azureSubscription: 'shivam-arm-connection'
+            Destination: 'AzureBlob'
+            storage: 'azurepolicyabcd'
+            ContainerName: 'guestconfiguration'
+            outputStorageUri: Parameters.outputStorageUri
+            outputStorageContainerSasToken: Parameters.outputStorageToken
+            sasTokenTimeOutInMinutes: '525600'        
         
-  #       - task: PowerShell@2
-  #         displayName: Creating Policy
-  #         inputs:
-  #           pwsh: true
-  #           targetType: 'inline'
-  #           script: |
-  #             find-module PSDesiredStateConfiguration | install-module -Force
-  #             find-module PSDSCResources | install-module -Force
-  #             find-module GuestConfiguration | install-module -Force
-  #             find-module SChannelDsc | install-module -Force
+        - task: PowerShell@2
+          displayName: Creating Policy
+          inputs:
+            pwsh: true
+            targetType: 'inline'
+            script: |
+              find-module PSDesiredStateConfiguration | install-module -Force
+              find-module PSDSCResources | install-module -Force
+              find-module GuestConfiguration | install-module -Force
+              find-module SChannelDsc | install-module -Force
                 
-  #             $ContentURI = "$(Parameters.outputStorageUri)tls-secure.zip$(Parameters.outputStorageToken)"
+              $ContentURI = "$(Parameters.outputStorageUri)tls-secure.zip$(Parameters.outputStorageToken)"
                 
-  #             New-GuestConfigurationPolicy -PolicyId (New-Guid).Guid -ContentUri $ContentURI -DisplayName 'tls-secure' -Path './policies' -Platform 'Windows' -Description 'tls-secure' -PolicyVersion 1.0.0 -Mode ApplyAndAutoCorrect -Verbose
+              New-GuestConfigurationPolicy -PolicyId (New-Guid).Guid -ContentUri $ContentURI -DisplayName 'tls-secure' -Path './policies' -Platform 'Windows' -Description 'tls-secure' -PolicyVersion 1.0.0 -Mode ApplyAndAutoCorrect -Verbose
 
-  #             $RawPolicy = Get-Content .\policies\tls-secure_DeployIfNotExists.json -raw
-  #             $PolicyObj = ConvertFrom-Json $RawPolicy
+              $RawPolicy = Get-Content .\policies\tls-secure_DeployIfNotExists.json -raw
+              $PolicyObj = ConvertFrom-Json $RawPolicy
 
-  #             $PolicyObj.properties.policyRule.then.details.deployment.properties.parameters.assignmentName.value = "tls-secure"
-  #             $PolicyObj.properties.policyRule.then.details.name = "tls-secure"
-  #             $Out = ConvertTo-Json -InputObject $PolicyObj -depth 32
-  #             Set-Content -Path .\policies\tls-secure_DeployIfNotExists.json -Value $Out
+              $PolicyObj.properties.policyRule.then.details.deployment.properties.parameters.assignmentName.value = "tls-secure"
+              $PolicyObj.properties.policyRule.then.details.name = "tls-secure"
+              $Out = ConvertTo-Json -InputObject $PolicyObj -depth 32
+              Set-Content -Path .\policies\tls-secure_DeployIfNotExists.json -Value $Out
           
-  #       - task: AzurePowerShell@5
-  #         displayName: Create Assignment and Remediation
-  #         inputs:
-  #           azureSubscription: 'shivam-arm-connection'
-  #           ScriptType: 'InlineScript'
-  #           azurePowerShellVersion: 'LatestVersion'
-  #           Inline: |
+        - task: AzurePowerShell@5
+          displayName: Create Assignment and Remediation
+          inputs:
+            azureSubscription: 'shivam-arm-connection'
+            ScriptType: 'InlineScript'
+            azurePowerShellVersion: 'LatestVersion'
+            Inline: |
             
-  #             $Policy = New-AzPolicyDefinition -Name 'tls-secure' -Policy .\policies\tls-secure_DeployIfNotExists.json
-  #             $Policy
+              $Policy = New-AzPolicyDefinition -Name 'tls-secure' -Policy .\policies\tls-secure_DeployIfNotExists.json
+              $Policy
 
-  #             Remove-AzPolicyAssignment -Id "/subscriptions/2743a8a0-5c2d-409c-8d8c-713bd8f1e619/providers/Microsoft.Authorization/policyAssignments/tls-secure"
+              Remove-AzPolicyAssignment -Id "/subscriptions/2743a8a0-5c2d-409c-8d8c-713bd8f1e619/providers/Microsoft.Authorization/policyAssignments/tls-secure"
 
-  #             $policyDef = Get-AzPolicyDefinition -Id $Policy.PolicyDefinitionId
-  #             $resourceGroup = Get-AzResourceGroup -Name 'myResourceGroupName'
-  #             $resourceGroup.ResourceId
-  #             $assignment = New-AzPolicyAssignment -Name 'tls-secure' -DisplayName 'tls-secure' -Scope $resourceGroup.ResourceId -PolicyDefinition $policyDef -Location 'centralus' -IdentityType "SystemAssigned"
+              $policyDef = Get-AzPolicyDefinition -Id $Policy.PolicyDefinitionId
+              $resourceGroup = Get-AzResourceGroup -Name 'myResourceGroupName'
+              $resourceGroup.ResourceId
+              $assignment = New-AzPolicyAssignment -Name 'tls-secure' -DisplayName 'tls-secure' -Scope $resourceGroup.ResourceId -PolicyDefinition $policyDef -Location 'centralus' -IdentityType "SystemAssigned"
 
-  #             $roleDefinitionIds = $policyDef.Properties.policyRule.then.details.roleDefinitionIds
+              $roleDefinitionIds = $policyDef.Properties.policyRule.then.details.roleDefinitionIds
 
-  #             Start-Sleep -Seconds 30
+              Start-Sleep -Seconds 30
 
-  #             if ($roleDefinitionIds.Count -gt 0)
-  #             {
-  #                 $roleDefinitionIds | ForEach-Object {
-  #                     $roleDefId = $_.Split("/") | Select-Object -Last 1
-  #                     New-AzRoleAssignment -Scope $resourceGroup.ResourceId -ObjectId $assignment.Identity.PrincipalId -RoleDefinitionId $roleDefId
-  #                 }
-  #             }
+              if ($roleDefinitionIds.Count -gt 0)
+              {
+                  $roleDefinitionIds | ForEach-Object {
+                      $roleDefId = $_.Split("/") | Select-Object -Last 1
+                      New-AzRoleAssignment -Scope $resourceGroup.ResourceId -ObjectId $assignment.Identity.PrincipalId -RoleDefinitionId $roleDefId
+                  }
+              }
 
-  #             Start-Sleep -Seconds 10
+              Start-Sleep -Seconds 10
 
-  #             Start-AzPolicyRemediation -Name 'myRemedation' -PolicyAssignmentId $assignment.PolicyAssignmentId -ResourceGroupName myResourceGroupName -ResourceDiscoveryMode ReEvaluateCompliance
+              Start-AzPolicyRemediation -Name 'myRemedation' -PolicyAssignmentId $assignment.PolicyAssignmentId -ResourceGroupName myResourceGroupName -ResourceDiscoveryMode ReEvaluateCompliance
