@@ -31,6 +31,10 @@ stages:
             targetType: 'inline'
             script: |
               dir
+              dir ..
+              
+
+
               
   #         - task: PowerShell@2
   #           displayName: Setting Modules and Compiling
