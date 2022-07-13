@@ -22,6 +22,7 @@ stages:
 
         steps:
         - task: DownloadSecureFile@1
+          name: Cert
           inputs:
             secureFile: 'GCPrivateKey.pfx'
         
@@ -30,7 +31,7 @@ stages:
             pwsh: true
             targetType: 'inline'
             script: |
-              dir
+              echo Installing $(Cert.secureFilePath) to the trusted CA directory
               dir ..
               
 
