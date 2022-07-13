@@ -47,6 +47,8 @@ stages:
               $certToSignThePackage = Get-ChildItem -Path cert:\LocalMachine\My | Where-Object {($_.Subject-eq "CN=GCEncryptionCertificate") } 
               Protect-GuestConfigurationPackage -Path .\tls-secure.zip -Certificate $certToSignThePackage -Verbose
               
+              Remove-Item -Path .\tls-secure.zip
+              Rename-Item .\tls-secure_signed.zip tls-secure.zip
               dir
         
   #         - task: PublishPipelineArtifact@1
