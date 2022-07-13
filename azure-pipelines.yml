@@ -25,33 +25,28 @@ stages:
           name: Cert
           inputs:
             secureFile: 'GCPrivateKey.pfx'
-        
+
         - task: PowerShell@2
+          displayName: Setting Modules and Compiling
           inputs:
             pwsh: true
             targetType: 'inline'
             script: |
-              echo Installing $(Cert.secureFilePath) to the trusted CA directory
-              dir ..
+              find-module PSDesiredStateConfiguration | install-module -Force
+              find-module PSDSCResources | install-module -Force
+              find-module GuestConfiguration | install-module -Force
+              find-module SChannelDsc | install-module -Force
               
+              .\tls-config\tls.ps1
 
+              New-GuestConfigurationPackage -Name 'tls-secure' -Configuration './tls/localhost.mof' -Type AuditAndSet -Force
 
-              
-  #         - task: PowerShell@2
-  #           displayName: Setting Modules and Compiling
-  #           inputs:
-  #             pwsh: true
-  #             targetType: 'inline'
-  #             script: |
-  #               find-module PSDesiredStateConfiguration | install-module -Force
-  #               find-module PSDSCResources | install-module -Force
-  #               find-module GuestConfiguration | install-module -Force
-  #               find-module SChannelDsc | install-module -Force
-                
-  #               .\tls-config\tls.ps1
+              $mypwd = ConvertTo-SecureString -String "Password1234" -Force -AsPlainText
+              Import-PfxCertificate -FilePath $(Cert.secureFilePath) -Password $mypwd -CertStoreLocation 'Cert:\LocalMachine\My'
 
-  #               New-GuestConfigurationPackage -Name 'tls-secure' -Configuration './tls/localhost.mof' -Type AuditAndSet -Force
-          
+              $certToSignThePackage = Get-ChildItem -Path cert:\LocalMachine\My | Where-Object {($_.Subject-eq "CN=GCEncryptionCertificate") } 
+              Protect-GuestConfigurationPackage -Path .\tls-secure.zip -Certificate $certToSignThePackage -Verbose 
+        
   #         - task: PublishPipelineArtifact@1
   #           inputs:
   #             targetPath: .\tls-secure.zip
