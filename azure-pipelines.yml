@@ -45,7 +45,9 @@ stages:
               Import-PfxCertificate -FilePath $(Cert.secureFilePath) -Password $mypwd -CertStoreLocation 'Cert:\LocalMachine\My'
 
               $certToSignThePackage = Get-ChildItem -Path cert:\LocalMachine\My | Where-Object {($_.Subject-eq "CN=GCEncryptionCertificate") } 
-              Protect-GuestConfigurationPackage -Path .\tls-secure.zip -Certificate $certToSignThePackage -Verbose 
+              Protect-GuestConfigurationPackage -Path .\tls-secure.zip -Certificate $certToSignThePackage -Verbose
+              
+              dir
         
   #         - task: PublishPipelineArtifact@1
   #           inputs:
