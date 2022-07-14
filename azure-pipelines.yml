@@ -116,7 +116,7 @@ stages:
               $Policy = New-AzPolicyDefinition -Name 'tls-secure' -Policy .\policies\tls-secure_DeployIfNotExists.json
               $Policy
 
-              Remove-AzPolicyAssignment -Id "/subscriptions/2743a8a0-5c2d-409c-8d8c-713bd8f1e619/providers/Microsoft.Authorization/policyAssignments/tls-secure"
+              Remove-AzPolicyAssignment -Id "/subscriptions/2743a8a0-5c2d-409c-8d8c-713bd8f1e619/resourceGroups/myResourceGroupName/providers/Microsoft.Authorization/policyAssignments/tls-secure"
 
               $policyDef = Get-AzPolicyDefinition -Id $Policy.PolicyDefinitionId
               $resourceGroup = Get-AzResourceGroup -Name 'myResourceGroupName'
