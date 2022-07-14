@@ -95,7 +95,7 @@ stages:
                 
               $ContentURI = "$(Parameters.outputStorageUri)tls-secure.zip$(Parameters.outputStorageToken)"
                 
-              New-GuestConfigurationPolicy -PolicyId (New-Guid).Guid -ContentUri $ContentURI -DisplayName 'tls-secure' -Path './policies' -Platform 'Windows' -Description 'tls-secure' -PolicyVersion 1.0.0 -Mode ApplyAndAutoCorrect -Verbose
+              New-GuestConfigurationPolicy -PolicyId (New-Guid).Guid -ContentUri $ContentURI -DisplayName 'tls-secure' -Path './policies' -Platform 'Windows' -Description 'tls-secure' -PolicyVersion 1.0.0 -Mode ApplyAndAutoCorrect -Verbose -Tag @{ GuestConfigPolicyCertificateValidation = 'enabled' }
 
               $RawPolicy = Get-Content .\policies\tls-secure_DeployIfNotExists.json -raw
               $PolicyObj = ConvertFrom-Json $RawPolicy
