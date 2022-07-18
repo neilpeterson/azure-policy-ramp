@@ -135,6 +135,6 @@ stages:
                   }
               }
 
-              Start-Sleep -Seconds 10
+              Start-Sleep -Seconds 30
 
               Start-AzPolicyRemediation -Name 'myRemedation' -PolicyAssignmentId $assignment.PolicyAssignmentId -ResourceGroupName myResourceGroupName -ResourceDiscoveryMode ReEvaluateCompliance
