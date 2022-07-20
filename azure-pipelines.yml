@@ -32,21 +32,24 @@ stages:
             pwsh: true
             targetType: 'inline'
             script: |
+
               find-module PSDesiredStateConfiguration | install-module -Force
               find-module PSDSCResources | install-module -Force
               find-module GuestConfiguration | install-module -Force
               find-module SChannelDsc | install-module -Force
               
-              .\tls-config\tls.ps1
+              .\tls-config\tls.ps1    # Compile to MOF file
 
+              # Create configuration zip package
               New-GuestConfigurationPackage -Name 'tls-secure' -Configuration './tls/localhost.mof' -Type AuditAndSet -Force
 
+              # Get certificate and sign package
               $mypwd = ConvertTo-SecureString -String "Password1234" -Force -AsPlainText
               Import-PfxCertificate -FilePath $(Cert.secureFilePath) -Password $mypwd -CertStoreLocation 'Cert:\LocalMachine\My'
-
               $certToSignThePackage = Get-ChildItem -Path cert:\LocalMachine\My | Where-Object {($_.Subject-eq "CN=GCEncryptionCertificate") } 
               Protect-GuestConfigurationPackage -Path .\tls-secure.zip -Certificate $certToSignThePackage -Verbose
               
+              # Rename the signed zip package for next upload to Azure Storage
               Remove-Item -Path .\tls-secure.zip
               Rename-Item .\tls-secure_signed.zip tls-secure.zip
               dir
@@ -92,14 +95,18 @@ stages:
               find-module PSDSCResources | install-module -Force
               find-module GuestConfiguration | install-module -Force
               find-module SChannelDsc | install-module -Force
-                
+
+              # Put together URI for Azure Storage blob  
               $ContentURI = "$(Parameters.outputStorageUri)tls-secure.zip$(Parameters.outputStorageToken)"
-                
+
+              # Create policy JSON file  
               New-GuestConfigurationPolicy -PolicyId (New-Guid).Guid -ContentUri $ContentURI -DisplayName 'tls-secure' -Path './policies' -Platform 'Windows' -Description 'tls-secure' -PolicyVersion 1.0.0 -Mode ApplyAndAutoCorrect -Verbose
 
+              # Access JSON object to modify
               $RawPolicy = Get-Content .\policies\tls-secure_DeployIfNotExists.json -raw
               $PolicyObj = ConvertFrom-Json $RawPolicy
 
+              # Modify field names to be the name of the policy/zip file
               $PolicyObj.properties.policyRule.then.details.deployment.properties.parameters.assignmentName.value = "tls-secure"
               $PolicyObj.properties.policyRule.then.details.name = "tls-secure"
               $Out = ConvertTo-Json -InputObject $PolicyObj -depth 32
@@ -113,20 +120,26 @@ stages:
             azurePowerShellVersion: 'LatestVersion'
             Inline: |
             
+              # Get current policy 
               $Policy = New-AzPolicyDefinition -Name 'tls-secure' -Policy .\policies\tls-secure_DeployIfNotExists.json
-              $Policy
 
+              # Remove current assignment to reassign
               Remove-AzPolicyAssignment -Id "/subscriptions/2743a8a0-5c2d-409c-8d8c-713bd8f1e619/resourceGroups/myResourceGroupName/providers/Microsoft.Authorization/policyAssignments/tls-secure"
 
+              # Get resource group to apply policy to (scope)
               $policyDef = Get-AzPolicyDefinition -Id $Policy.PolicyDefinitionId
               $resourceGroup = Get-AzResourceGroup -Name 'myResourceGroupName'
               $resourceGroup.ResourceId
+
+              # Assign policy
               $assignment = New-AzPolicyAssignment -Name 'tls-secure' -DisplayName 'tls-secure' -Scope $resourceGroup.ResourceId -PolicyDefinition $policyDef -Location 'centralus' -IdentityType "SystemAssigned"
 
+              # Generate role assignments
               $roleDefinitionIds = $policyDef.Properties.policyRule.then.details.roleDefinitionIds
 
               Start-Sleep -Seconds 30
 
+              # Apply role assignments
               if ($roleDefinitionIds.Count -gt 0)
               {
                   $roleDefinitionIds | ForEach-Object {
@@ -137,4 +150,5 @@ stages:
 
               Start-Sleep -Seconds 30
 
+              # Begin remediation but wait for compliance results
               Start-AzPolicyRemediation -Name 'myRemedation' -PolicyAssignmentId $assignment.PolicyAssignmentId -ResourceGroupName myResourceGroupName -ResourceDiscoveryMode ReEvaluateCompliance
