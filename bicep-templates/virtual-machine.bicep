@@ -119,7 +119,7 @@ resource singingCertificate 'Microsoft.Compute/virtualMachines/extensions@2020-0
     typeHandlerVersion: '1.7'
     autoUpgradeMinorVersion: true
     protectedSettings: {
-      commandToExecute: 'powershell.exe Invoke-WebRequest "${signCert}" -OutFile c:\\cert.cer && powershell.exe Import-Certificate -FilePath c:\\cert.cer -CertStoreLocation Cert:\\LocalMachine\\Ca\\ && powershell.exe Remove-Item c:\\cert.cer -Force'
+      commandToExecute: 'powershell.exe Invoke-WebRequest "${signCert}" -OutFile c:\\cert.cer && powershell.exe Import-Certificate -FilePath c:\\cert.cer -CertStoreLocation Cert:\\LocalMachine\\TrustedPublisher\\'
     }
   }
 }
