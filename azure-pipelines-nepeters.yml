@@ -124,7 +124,7 @@ stages:
               $Policy = New-AzPolicyDefinition -Name 'tls-secure' -Policy .\policies\tls-secure_DeployIfNotExists.json
 
               # Remove current assignment to reassign
-              Remove-AzPolicyAssignment -Id "/subscriptions/2743a8a0-5c2d-409c-8d8c-713bd8f1e619/resourceGroups/myResourceGroupName/providers/Microsoft.Authorization/policyAssignments/tls-secure"
+              # Remove-AzPolicyAssignment -Id "/subscriptions/2743a8a0-5c2d-409c-8d8c-713bd8f1e619/resourceGroups/myResourceGroupName/providers/Microsoft.Authorization/policyAssignments/tls-secure"
 
               # Get resource group to apply policy to (scope)
               $policyDef = Get-AzPolicyDefinition -Id $Policy.PolicyDefinitionId
@@ -132,7 +132,7 @@ stages:
               $resourceGroup.ResourceId
 
               # Assign policy
-              $assignment = New-AzPolicyAssignment -Name 'tls-secure' -DisplayName 'tls-secure' -Scope $resourceGroup.ResourceId -PolicyDefinition $policyDef -Location 'centralus' -IdentityType "SystemAssigned"
+              $assignment = New-AzPolicyAssignment -Name 'tls-secure' -DisplayName 'tls-secure' -Scope $resourceGroup.ResourceId -PolicyDefinition $policyDef -Location 'eastus' -IdentityType "SystemAssigned"
 
               # Generate role assignments
               $roleDefinitionIds = $policyDef.Properties.policyRule.then.details.roleDefinitionIds
@@ -151,4 +151,4 @@ stages:
               Start-Sleep -Seconds 30
 
               # Begin remediation but wait for compliance results
-              Start-AzPolicyRemediation -Name 'myRemedation' -PolicyAssignmentId $assignment.PolicyAssignmentId -ResourceGroupName myResourceGroupName -ResourceDiscoveryMode ReEvaluateCompliance
+              Start-AzPolicyRemediation -Name 'myRemedation' -PolicyAssignmentId $assignment.PolicyAssignmentId -ResourceGroupName dsc-data-001 -ResourceDiscoveryMode ReEvaluateCompliance
