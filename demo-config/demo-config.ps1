@@ -6,7 +6,7 @@ Configuration basic {
     Node localhost {
          NewFile test {
               Path = "/tmp/test.txt"
-              Content = "DSC Rocks!"
+              Content = "Replace"
               Ensure = "Present"
          }
     }
