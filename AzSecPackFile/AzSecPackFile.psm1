@@ -19,15 +19,7 @@ class Reason {
    Public Functions
 #>
 
-function Get-File {
-    param(
-        [Ensure]$ensure,
-
-        [parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [String]$path
-    )
-    $content = "
+$content = "
     set MONITORING_DATA_DIRECTORY=C:\Monitoring\Data
     set MONITORING_TENANT=%USERNAME%
     set MONITORING_ROLE=admin
@@ -41,6 +33,16 @@ function Get-File {
     set MONITORING_CONFIG_VERSION=1.0
     set AZSECPACK_PILOT_FEATURES=MdeServer2019Support
     %MonAgentClientLocation%\MonAgentClient.exe -useenv"
+
+function Get-File {
+    param(
+        [Ensure]$ensure,
+
+        [parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [String]$path
+    )
+    
     $fileContent        = [Reason]::new()
     $fileContent.code   = 'file:file:content'
 
@@ -89,20 +91,7 @@ function Set-File {
         [ValidateNotNullOrEmpty()]
         [String]$path
     )
-    $content = "
-    set MONITORING_DATA_DIRECTORY=C:\Monitoring\Data
-    set MONITORING_TENANT=%USERNAME%
-    set MONITORING_ROLE=admin
-    set MONITORING_ROLE_INSTANCE=%COMPUTERNAME%
-    set MONITORING_GCS_ENVIRONMENT=DiagnosticsProd
-    set MONITORING_GCS_ACCOUNT=shivam
-    set MONITORING_GCS_NAMESPACE=policy
-    set MONITORING_GCS_REGION=centralus
-    set MONITORING_GCS_AUTH_ID_TYPE=AuthKeyVault
-    set MONITORING_GCS_AUTH_ID= PPE.GENEVA.KEYVAULT.AZSECPACK.FIT-MTP.FME.MICROSOFT.COM
-    set MONITORING_CONFIG_VERSION=1.0
-    set AZSECPACK_PILOT_FEATURES=MdeServer2019Support
-    %MonAgentClientLocation%\MonAgentClient.exe -useenv"
+
     Remove-Item $path -Force -ErrorAction SilentlyContinue
     if ($ensure -eq "Present") {
         New-Item $path -ItemType File -Force
@@ -120,20 +109,6 @@ function Test-File {
         [ValidateNotNullOrEmpty()]
         [String]$path
     )
-    $content = "
-    set MONITORING_DATA_DIRECTORY=C:\Monitoring\Data
-    set MONITORING_TENANT=%USERNAME%
-    set MONITORING_ROLE=admin
-    set MONITORING_ROLE_INSTANCE=%COMPUTERNAME%
-    set MONITORING_GCS_ENVIRONMENT=DiagnosticsProd
-    set MONITORING_GCS_ACCOUNT=shivam
-    set MONITORING_GCS_NAMESPACE=policy
-    set MONITORING_GCS_REGION=centralus
-    set MONITORING_GCS_AUTH_ID_TYPE=AuthKeyVault
-    set MONITORING_GCS_AUTH_ID= PPE.GENEVA.KEYVAULT.AZSECPACK.FIT-MTP.FME.MICROSOFT.COM
-    set MONITORING_CONFIG_VERSION=1.0
-    set AZSECPACK_PILOT_FEATURES=MdeServer2019Support
-    %MonAgentClientLocation%\MonAgentClient.exe -useenv"
 
     $test = $false
     $get = Get-File @PSBoundParameters
