@@ -1,6 +1,6 @@
 Configuration azsecpack {
     Import-DscResource -ModuleName PSDscResources
-    Import-DscResource -ModuleName NewFile
+    Import-DscResource -ModuleName AzSecPackFile
 
     $Role = $ConfigurationData.NonNodeData.AzSecPackRole
     $Account = $ConfigurationData.NonNodeData.AzSecPackAcct
@@ -23,17 +23,43 @@ Configuration azsecpack {
     %MonAgentClientLocation%\MonAgentClient.exe -useenv"
 
     Node localhost {
-        NewFile AzSecPackDir {
-            Path = 'C:\Monitoring'
-            Ensure = 'Present'
+
+        AzSecPackFile AzSecPack {
+            path = 'C:\Monitoring\runagentClient.cmd'
+            ensure = 'Present'
         }
 
-        Newfile AzSecPackCMD {
-            Ensure = 'Present'
-            DependsOn = '[NewFile] AzSecPackDir'
-            Path = "C:\Monitoring\runagentClient.cmd"
-            Content = $AzSecPackCMD
-        }
+
+        # NewFile AzSecPackDir {
+        #     Path = 'C:\Monitoring'
+        #     Ensure = 'Present'
+        # }
+
+        # Newfile AzSecPackCMD {
+        #     Ensure = 'Present'
+        #     DependsOn = '[NewFile] AzSecPackDir'
+        #     Path = "C:\Monitoring\runagentClient.cmd"
+        #     Content = $AzSecPackCMD
+        # }
+
+        # ScheduledTask AzSecPack {
+        #     TaskName            = 'Geneva'
+        #     ScheduleType        = 'AtStartup'
+        #     ActionExecutable    = 'C:\Monitoring\runagentClient.cmd'
+        #     BuiltInAccount      = 'System'
+        # }
+
+        # Script AzSecPackStart {
+        #     SetScript = {
+        #         Start-ScheduledTask Geneva
+        #     }
+        #     TestScript = { 
+        #         Test-Path C:\Monitoring\Data\
+        #     }
+        #     GetScript = { @{} }
+        #     DependsOn = '[ScheduledTask]AzSecPack'
+        # }
+
     }
 }
 
